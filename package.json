@@ -4,7 +4,7 @@
   "description": "",
   "main": "script.js",
   "scripts": {
-    "dev": "nodemon script.js",
+    "dev": "nodemon --config nodemon.json script.js",
     "start": "node script.js"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "dependencies": {
     "node-telegram-bot-api": "^0.65.1",
     "nodemon": "^3.1.0",
+    "proper-lockfile": "^4.1.2",
     "telegram-bot-api": "^2.0.1"
   }
 }

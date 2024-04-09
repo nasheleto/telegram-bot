@@ -1,54 +1,34 @@
 const TelegramApi = require('node-telegram-bot-api')
-const {gameOptions, againOptions} = require('./options')
+const {againOptions} = require('./options')
+const commands = require('./commands')
 const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
-
 const bot = new TelegramApi(token, {polling: true})
+const chats = require('./chats')
 
-const chats = {}
+const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMenu !== false).map((c) => ({
+    command: c[0], description: c[1].meta.description,
+}))
 
-
-
-bot.setMyCommands([
-    {command: '/start', description: 'Начальное приветствие'},
-    {command: '/info', description: 'Информация'},
-    {command: '/game', description: 'Игра'},
-
-])
-
-const startGame = async (chatId) => {
-    await bot.sendMessage(chatId, 'Сейчас я загадаю цифру от 0 до 9, и ты должен её угадать')
-    const randomNumber = Math.floor(Math.random() * 10)
-    chats[chatId] = randomNumber
-    await bot.sendMessage(chatId, 'Отгадывай', gameOptions)
-}
-
-const start = () => {
+const start = async () => {
+    await bot.setMyCommands(myCommands)
     bot.on('message', async msg => {
         const text = msg.text
         const chatId = msg.chat.id
-        const name = msg.from.first_name
-        const date = msg.date * 1000
 
-        // console.log(msg)
-
-        if (text === '/start') {
-            await bot.sendSticker(chatId, 'https://chpic.su/_data/stickers/h/hdjajs78_h/hdjajs78_h_002.webp?v=1712145304')
-            await bot.sendMessage(chatId, 'Привет')
-        } else if (text === '/info') {
-            await bot.sendMessage(chatId, `Тебя зовут ${name}`)
-        } else if (text === '/game'){
-            return startGame(chatId)
+        const [key, ...args] = text.replace('/', '').split(' ')
+        const command = Object.values(commands).find((c) => c.meta.pattern.test(text))
+        if (command === undefined) {
+            bot.sendMessage(chatId, 'Я тебя не понимаю')
         } else {
-            await bot.sendMessage(chatId, 'Я тебя не понимаю')
+            command.command(bot, msg, args)
         }
     })
 
     bot.on('callback_query', async msg => {
         const data = msg.data
         const chatId = msg.message.chat.id
-        console.log(data, chats[chatId])
         if (data === '/again') {
-            return startGame(chatId)
+            return commands.game.command(bot, msg.message)
         }
         // await bot.sendMessage(chatId, `Ты выбрал цифру ${data}`)
         if (Number(data) === chats[chatId]) {

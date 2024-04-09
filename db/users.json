@@ -1,0 +1,34 @@
+[
+  {
+    "id": 427134982,
+    "firstName": "Xenia",
+    "lastName": null,
+    "balance": 17020,
+    "nickname": "xenon",
+    "lastBonusAt": 1712649379699
+  },
+  {
+    "id": 388841913,
+    "nickname": "жопа",
+    "firstName": "Oleh",
+    "lastName": "Pohorilyy",
+    "balance": 2000,
+    "lastBonusAt": 1712607370398
+  },
+  {
+    "id": 762396133,
+    "nickname": "soli_ara",
+    "firstName": "Wandering cat",
+    "lastName": null,
+    "balance": 133125,
+    "lastBonusAt": 1712608282973
+  },
+  {
+    "id": 6191675282,
+    "nickname": "чушпан",
+    "firstName": "Мини чувиха",
+    "lastName": null,
+    "balance": 10010007.5,
+    "lastBonusAt": 1712648899935
+  }
+]
