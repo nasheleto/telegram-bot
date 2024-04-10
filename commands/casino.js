@@ -1,5 +1,5 @@
 const {getUserById, updateUser} = require('../storage')
-const {shuffle} = require('../utils')
+const {shuffle, formatMoney} = require('../utils')
 const command = require('./command')
 
 const meta = {
@@ -48,7 +48,7 @@ const handler = async (bot, msg, args) => {
 
     await updateUser(msg.from.id, update)
 
-    bot.sendMessage(msg.chat.id, `Вам выпал X${multiplier}. Ваш баланс составляет $${update.balance}`)
+    bot.sendMessage(msg.chat.id, `Вам выпал X${multiplier}. Ваш баланс составляет $${formatMoney(update.balance)}`)
 }
 
 module.exports = command(meta, handler)

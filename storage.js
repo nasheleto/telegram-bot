@@ -55,6 +55,10 @@ const updateUser = async (id, update) => {
         return false
     }
 
+    if ('balance' in update) {  
+        update.balance = Math.round((update.balance + Number.EPSILON) * 100) / 100
+    }
+
     users[foundIndex] = { ...foundUser, ...update }
 
     const converted = JSON.stringify(users, null, 2)

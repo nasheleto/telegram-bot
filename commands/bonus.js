@@ -1,17 +1,10 @@
 const {getUserById, updateUser} = require('../storage')
 const command = require('./command')
+const utils = require('../utils')
 
 const meta = {
     description: 'Бонус', 
     pattern: /^\/?(bonus|бонус)\s?.*$/,
-}
-
-const formatTime = (time) => {
-    const hours = Math.floor((time / (1000 * 60 * 60)) % 24)
-    const minutes = Math.floor((time / (1000 * 60)) % 60)
-    const seconds = Math.floor((time / 1000) % 60)
-
-    return `${hours} ч. ${minutes} мин. ${seconds} сек.`
 }
 
 const handler = async (bot, msg) => {
@@ -19,7 +12,7 @@ const handler = async (bot, msg) => {
     const day = 1000 * 60 * 60 * 24 
     const time = Date.now() - (user.lastBonusAt ?? 0)
     if (time < day) {
-        return bot.sendMessage(msg.from.id, `Бонус еще недоступен, его можно забрать через ${formatTime(day - time)}`)
+        return bot.sendMessage(msg.from.id, `Бонус еще недоступен, его можно забрать через ${utils.formatTime(day - time)}`)
     }
     const bonus = 1500
     const update = {
