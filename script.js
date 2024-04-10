@@ -4,6 +4,7 @@ const commands = require('./commands')
 const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
 const bot = new TelegramApi(token, {polling: true})
 const chats = require('./chats')
+const { updateUser, getUserById } = require('./storage')
 
 const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMenu !== false).map((c) => ({
     command: c[0], description: c[1].meta.description,
@@ -15,12 +16,16 @@ const start = async () => {
         const text = msg.text
         const chatId = msg.chat.id
 
-        const [key, ...args] = text.replace('/', '').split(' ')
+        const [, ...args] = text.replace('/', '').split(' ')
         const command = Object.values(commands).find((c) => c.meta.pattern.test(text))
         if (command === undefined) {
             bot.sendMessage(chatId, 'Я тебя не понимаю')
         } else {
-            command.command(bot, msg, args)
+            try {
+                await command.command(bot, msg, args)
+            } catch (error) {
+                console.error(error)
+            }
         }
     })
 
@@ -32,9 +37,20 @@ const start = async () => {
         }
         // await bot.sendMessage(chatId, `Ты выбрал цифру ${data}`)
         if (Number(data) === chats[chatId]) {
-            return bot.sendMessage(chatId, `Поздравляю, ты отгадал цифру ${chats[chatId]}`, againOptions)
-        } else {
-            return bot.sendMessage(chatId, `К сожалению, ты не угадал цифру ${chats[chatId]}`, againOptions)
+            let user = await getUserById(msg.from.id)
+            await updateUser(msg.from.id, {
+                balance: user.balance + 1500
+            })
+            user = await getUserById(msg.from.id)
+            await bot.sendMessage(chatId, `Поздравляю, ты отгадал цифру ${chats[chatId]} и выиграл $1500. Теперь твой баланс составляет $${user.balance}`, againOptions)
+            delete chats[chatId]
+        }
+        else if (chats[chatId] === undefined) {
+            return bot.sendMessage(chatId, `Запусти /game или нажми на кнопку "Играть еще раз"`, againOptions)
+        }
+        else {
+            await bot.sendMessage(chatId, `К сожалению, ты не угадал цифру ${chats[chatId]}`, againOptions)
+            delete chats[chatId]
         }
     })
 }
