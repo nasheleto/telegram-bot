@@ -14,6 +14,11 @@ const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMen
 const start = async () => {
     await bot.setMyCommands(myCommands)
     bot.on('message', async msg => {
+        const user = await getUserById(msg.from.id)
+        if (user !== null && user.banExpiresAt > Date.now()) {
+            return
+        }
+        
         const text = msg.text
         const chatId = msg.chat.id
 

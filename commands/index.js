@@ -7,5 +7,6 @@ module.exports = {
     casino: require('./casino'),
     bonus: require('./bonus'),
     pension: require('./pension'),
-    home: require('./home')
+    home: require('./home'),
+    ban: require('./ban'),
 }
