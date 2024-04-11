@@ -5,6 +5,7 @@ const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
 const bot = new TelegramApi(token, {polling: true})
 const chats = require('./chats')
 const { updateUser, getUserById } = require('./storage')
+const {formatMoney} = require('./utils')
 
 const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMenu !== false).map((c) => ({
     command: c[0], description: c[1].meta.description,
@@ -15,6 +16,10 @@ const start = async () => {
     bot.on('message', async msg => {
         const text = msg.text
         const chatId = msg.chat.id
+
+        if (text === undefined) {
+            return bot.sendMessage(chatId, 'О, милота!')
+        }
 
         const [, ...args] = text.replace('/', '').split(' ')
         const command = Object.values(commands).find((c) => c.meta.pattern.test(text))
@@ -42,7 +47,7 @@ const start = async () => {
                 balance: user.balance + 1500
             })
             user = await getUserById(msg.from.id)
-            await bot.sendMessage(chatId, `Поздравляю, ты отгадал цифру ${chats[chatId]} и выиграл $1500. Теперь твой баланс составляет $${user.balance}`, againOptions)
+            await bot.sendMessage(chatId, `Поздравляю, ты отгадал цифру ${chats[chatId]} и выиграл $1500. Теперь твой баланс составляет $${formatMoney(user.balance)}`, againOptions)
             delete chats[chatId]
         }
         else if (chats[chatId] === undefined) {
