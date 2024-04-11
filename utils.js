@@ -33,17 +33,20 @@ const formatMoney = (money) => {
   if (Math.abs(money) < 1000) {
     return money
   }
-  const [int, float] = BigInt(money).toString().split('.')
+  const int = BigInt(Math.floor(money)).toString()
+
+  const float = (money - Math.floor(money)).toFixed(2)
+
   const formattedArray = []
 
   for (let i = 0; i < Math.ceil(int.length / 3); i++) {
     const sliced = int.slice(Math.max(int.length - 3*(i+1), 0), int.length - i*3)
     formattedArray.push(sliced)
   }
-  if (float === undefined) {
+  if (Number.isInteger(money)) {
     return formattedArray.reverse().join('.')
   } else {
-    return formattedArray.reverse().join('.') + ',' + float
+    return formattedArray.reverse().join('.') + ',' + float.slice(2)
   }
 }
 

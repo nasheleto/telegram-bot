@@ -20,7 +20,7 @@ const handler = async (bot, msg) => {
         lastBonusAt: Date.now()
     }
     await updateUser(msg.from.id, update)
-    bot.sendMessage(msg.from.id, `Поздравляю! Бонус $1500 собран. Теперь ваш баланс составляет $${update.balance}`)
+    bot.sendMessage(msg.from.id, `Поздравляю! Бонус $1500 собран. Теперь твой баланс составляет $${utils.formatMoney(update.balance)}`)
 }
 
 module.exports = command(meta, handler)

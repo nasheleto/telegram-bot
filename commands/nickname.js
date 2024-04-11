@@ -11,7 +11,7 @@ const handler = async (bot, msg, args) => {
     const nickname = args.join(' ')
 
     if (!nickname) {
-        return await bot.sendMessage(msg.chat.id, `Невозможно установить такой никнейм. Попробуйте /nickname <ваш ник>`)
+        return await bot.sendMessage(msg.chat.id, `Невозможно установить такой никнейм. Попробуйте /nickname <твой ник>`)
     }
 
     if (nickname.length > 16) {

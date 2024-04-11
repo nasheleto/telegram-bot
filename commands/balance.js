@@ -10,7 +10,7 @@ const meta = {
 const handler = async (bot, msg) => {
     const user = await getUserById(msg.from.id)
  
-    await bot.sendMessage(msg.chat.id, `Ваш баланс $${formatMoney(user.balance)}`)
+    await bot.sendMessage(msg.chat.id, `Твой баланс $${formatMoney(user.balance)}`)
 }
 
 module.exports = command(meta, handler)
