@@ -1,4 +1,4 @@
-const {getUserById} = require('../storage')
+const {getUserById} = require('../models/users')
 const command = require('./command')
 
 const meta = {

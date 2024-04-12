@@ -1,4 +1,4 @@
-const {updateUser, getUserByNickname} = require('../storage')
+const {updateUser, getUserByNickname} = require('../models/users')
 const command = require('./command')
 
 const meta = {

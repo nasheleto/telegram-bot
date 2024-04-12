@@ -1,39 +1,30 @@
 const fs = require('node:fs/promises')
-const dbPath = './db/users.json'
+const path = require('path')
+const { readJson } = require('../utils')
+
+const dbPath = path.resolve(__dirname, '..', 'db', 'users.json')
 
 const getUsers = async () => {
-    try {
-        const data = await fs.readFile(dbPath, {encoding: 'utf8'})
-        if (data.length === 0) {
-            return []
-        }
-        try {
-            const users = JSON.parse(data)
-            if (Array.isArray(users)) {
-                return users
-            } else {
-                throw new Error('Это не массив')
-            }
-            
-        } catch (error) {
-            throw error
-        }
+    const users = await readJson(dbPath, [])
 
-    } catch (error) {
-        if (error.code === 'ENOENT') {
-            await fs.writeFile(dbPath, JSON.stringify([]))
-            return []
-        } else {
-            throw error
-        }
-    }  
+    if (Array.isArray(users)) {
+        return users
+    } else {
+        throw new Error(`"${dbPath}" has incorrect type.`)
+    }
+}
+
+const writeUsers = async (users) => {
+    const json = JSON.stringify(users, null, 2)
+
+    return fs.writeFile(dbPath, json)
 }
 
 const createUser = async (user) => {
     const users = await getUsers()
     users.push(user)
-    const jsonUsers = JSON.stringify(users, null, 2)
-    return fs.writeFile(dbPath, jsonUsers)
+
+    return writeUsers(users)
 }
 
 const getUserById = async (id) => {
@@ -61,8 +52,8 @@ const updateUser = async (id, update) => {
 
     users[foundIndex] = { ...foundUser, ...update }
 
-    const converted = JSON.stringify(users, null, 2)
-    await fs.writeFile(dbPath, converted)
+    await writeUsers(users)
+
     return true
 }
 
@@ -74,12 +65,14 @@ const getUserByNickname = async (nickname) => {
 
 const deleteUser = async (id) => {
     const users = await getUsers()
+
     const withoutDeleted = users.filter((m) => m.id !== Number(id))
     if (users.length === withoutDeleted.length) {
         return false
     }
-    const converted = JSON.stringify(withoutDeleted, null, 2)
-    await fs.writeFile(dbPath, converted)
+
+    await writeUsers(withoutDeleted)
+
     return true
 }
 

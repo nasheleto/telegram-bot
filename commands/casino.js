@@ -1,6 +1,5 @@
-const {getUserById, updateUser} = require('../storage')
+const {getUserById, updateUser} = require('../models/users')
 const {shuffle, formatMoney} = require('../utils')
-const {lang} = require('../lang')
 const command = require('./command')
 
 const meta = {

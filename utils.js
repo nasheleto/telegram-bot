@@ -50,9 +50,31 @@ const formatMoney = (money) => {
   }
 }
 
+const readJson = async (path, defaultValue = undefined) => {
+  try {
+      const data = await require('node:fs/promises').readFile(path, {encoding: 'utf8'})
+      if (data.length === 0) {
+          return defaultValue
+      }
+
+      return JSON.parse(data)
+  } catch (error) {
+      if (error.code === 'ENOENT') {
+          if (defaultValue !== undefined) {
+            await fs.writeFile(path, JSON.stringify(defaultValue))
+          }
+          
+          return defaultValue
+      } else {
+          throw error
+      }
+  }
+}
+
 module.exports = {
     shuffle,
     formatTime,
     formatTimeWeek,
-    formatMoney
+    formatMoney,
+    readJson
 }

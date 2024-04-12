@@ -1,12 +1,12 @@
 const TelegramApi = require('node-telegram-bot-api')
-const {againOptions} = require('./options')
+const { againOptions } = require('./options')
 const commands = require('./commands')
 const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
 const bot = new TelegramApi(token, {polling: true})
 const chats = require('./chats')
-const { updateUser, getUserById } = require('./storage')
-const {formatMoney} = require('./utils')
-const { initializeLang, getLang } = require('./lang')
+const { updateUser, getUserById } = require('./models/users')
+const { formatMoney } = require('./utils')
+const { getLang } = require('./models/langs')
 
 const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMenu !== false).map((c) => ({
     command: c[0], description: c[1].meta.description,
@@ -16,7 +16,6 @@ const start = async () => {
     const lang = await getLang()
     await bot.setMyCommands(myCommands)
     bot.on('message', async msg => {
-        console.log(msg)
         const user = await getUserById(msg.from.id)
         if (user !== null && user.banExpiresAt > Date.now()) {
             return

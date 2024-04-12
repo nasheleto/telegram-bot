@@ -1,4 +1,4 @@
-const {createUser, getUserById, updateUser} = require('../storage')
+const {createUser, getUserById, updateUser} = require('../models/users')
 const command = require('./command')
 const {formatMoney} = require('../utils')
 
