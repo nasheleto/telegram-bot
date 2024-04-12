@@ -16,6 +16,7 @@ const start = async () => {
     const lang = await getLang()
     await bot.setMyCommands(myCommands)
     bot.on('message', async msg => {
+        console.log(msg)
         const user = await getUserById(msg.from.id)
         if (user !== null && user.banExpiresAt > Date.now()) {
             return
