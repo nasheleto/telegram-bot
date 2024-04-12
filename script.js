@@ -1,70 +1,29 @@
 const TelegramApi = require('node-telegram-bot-api')
-const { againOptions } = require('./options')
-const commands = require('./commands')
-const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
-const bot = new TelegramApi(token, {polling: true})
-const chats = require('./chats')
-const { updateUser, getUserById } = require('./models/users')
-const { formatMoney } = require('./utils')
 const { getLang } = require('./models/langs')
+const onMessage = require('./events/message')
+const onCallbackQuery = require('./events/callback_query')
+const commands = require('./commands')
 
-const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMenu !== false).map((c) => ({
-    command: c[0], description: c[1].meta.description,
-}))
+const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
+const bot = new TelegramApi(token, { polling: true })
+
+const myCommands = Object.entries(commands)
+    .filter(([, { meta }]) => meta.displayInMenu !== false)
+    .map(([command, { meta }]) => ({
+        command,
+        description: meta.description
+    }))
 
 const start = async () => {
     const lang = await getLang()
+    const services = {
+        lang
+    }
+
     await bot.setMyCommands(myCommands)
-    bot.on('message', async msg => {
-        const user = await getUserById(msg.from.id)
-        if (user !== null && user.banExpiresAt > Date.now()) {
-            return
-        }
-        
-        const text = msg.text
-        const chatId = msg.chat.id
 
-        if (text === undefined) {
-            return bot.sendMessage(chatId, 'О, милота!')
-        }
-
-        const [, ...args] = text.replace('/', '').split(' ')
-        const command = Object.values(commands).find((c) => c.meta.pattern.test(text))
-        if (command === undefined) {
-            bot.sendMessage(chatId, 'Я тебя не понимаю')
-        } else {
-            try {
-                await command.command(bot, msg, args, {lang})
-            } catch (error) {
-                console.error(error)
-            }
-        }
-    })
-
-    bot.on('callback_query', async msg => {
-        const data = msg.data
-        const chatId = msg.message.chat.id
-        if (data === '/again') {
-            return commands.game.command(bot, msg.message)
-        }
-        // await bot.sendMessage(chatId, `Ты выбрал цифру ${data}`)
-        if (Number(data) === chats[chatId]) {
-            let user = await getUserById(msg.from.id)
-            await updateUser(msg.from.id, {
-                balance: user.balance + 1500
-            })
-            user = await getUserById(msg.from.id)
-            await bot.sendMessage(chatId, `Поздравляю, ты отгадал цифру ${chats[chatId]} и выиграл $1500. Теперь твой баланс составляет $${formatMoney(user.balance)}`, againOptions)
-            delete chats[chatId]
-        }
-        else if (chats[chatId] === undefined) {
-            return bot.sendMessage(chatId, `Запусти /game или нажми на кнопку "Играть еще раз"`, againOptions)
-        }
-        else {
-            await bot.sendMessage(chatId, `К сожалению, ты не угадал цифру ${chats[chatId]}`, againOptions)
-            delete chats[chatId]
-        }
-    })
+    bot.on('message', onMessage(bot, services))
+    bot.on('callback_query', onCallbackQuery(bot))
 }
 
 start()
