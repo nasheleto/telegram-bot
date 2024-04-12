@@ -1,6 +1,5 @@
 const {getUserById, updateUser, getUserByNickname} = require('../storage')
 const command = require('./command')
-const {formatMoney} = require('../utils')
 
 const meta = {
     description: 'бан',  
@@ -9,17 +8,30 @@ const meta = {
 }
 
 const handler = async (bot, msg, args) => {
+    const invoker = await getUserById(msg.from.id)
+    if (!invoker.isAdmin) {
+        return
+    }
     const nickname = args[0]
     const user = await getUserByNickname(nickname)
     if (user === null) {
         return bot.sendMessage(msg.chat.id, 'Такого пользователя нет')
     }
     
-    const days = Number(args[1]) * 24 * 60 * 60 * 1000
-    if (Number.isNaN(days) || days < 0) {
-        return bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /ban <ник юзера> <количество дней>')
+    let time
+
+    switch(args[1][args[1].length - 1]) {
+        case 'd': time = parseInt(args[1]) * 24 * 60 * 60 * 1000; break
+        case 'h': time = parseInt(args[1]) * 60 * 60 * 1000; break
+        case 'm': time = parseInt(args[1]) * 60 * 1000; break
+        default: return await bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /ban <ник юзера> <количество>')
     }
-    const banExpiresAt = Date.now() + days
+
+    if (Number.isNaN(time) || time < 0) {
+        return bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /ban <ник юзера> <количество (d, h, m)>')
+    }
+
+    const banExpiresAt = Date.now() + time
     await updateUser(user.id, {banExpiresAt})
     await bot.sendMessage(msg.chat.id, `Вы успешно забанили ${nickname} до ${new Date(banExpiresAt)}`)
 }

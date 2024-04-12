@@ -9,4 +9,5 @@ module.exports = {
     pension: require('./pension'),
     home: require('./home'),
     ban: require('./ban'),
+    give: require('./giveAdmin'),
 }
