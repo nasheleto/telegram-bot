@@ -1,10 +1,12 @@
+require('dotenv').config()
+
 const TelegramApi = require('node-telegram-bot-api')
 const { getLang } = require('./models/langs')
 const onMessage = require('./events/message')
 const onCallbackQuery = require('./events/callback_query')
 const commands = require('./commands')
 
-const token = '7072616689:AAFzXY_LFbxdjb4ZKo_OG3YIiMdrb51qBfY'
+const token = process.env.TELEGRAM_TOKEN
 const bot = new TelegramApi(token, { polling: true })
 
 const myCommands = Object.entries(commands)
