@@ -1,5 +1,6 @@
 const {getUserById, updateUser} = require('../storage')
 const {shuffle, formatMoney} = require('../utils')
+const {lang} = require('../lang')
 const command = require('./command')
 
 const meta = {
@@ -8,7 +9,7 @@ const meta = {
     displayInMenu: false,
 }
 
-const handler = async (bot, msg, args) => {
+const handler = async (bot, msg, args, {lang}) => {
     const user = await getUserById(msg.from.id)
     if (user === null) {
         return bot.sendMessage(msg.chat.id, 'Чтобы использовать эту команду, напишите /start')
@@ -19,7 +20,7 @@ const handler = async (bot, msg, args) => {
     const bet = Number(args[0])
 
     if (Number.isNaN(bet)){
-        return bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /casino или /казино или казино <ставка>')
+        return bot.sendMessage(msg.chat.id, lang.casino_invalid_command_error[user.lang ?? msg.from.language_code ?? "en"])
     }
 
     if (bet > user.balance) {

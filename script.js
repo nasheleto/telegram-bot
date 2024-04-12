@@ -6,12 +6,14 @@ const bot = new TelegramApi(token, {polling: true})
 const chats = require('./chats')
 const { updateUser, getUserById } = require('./storage')
 const {formatMoney} = require('./utils')
+const { initializeLang, getLang } = require('./lang')
 
 const myCommands = Object.entries(commands).filter((c) => c[1].meta.displayInMenu !== false).map((c) => ({
     command: c[0], description: c[1].meta.description,
 }))
 
 const start = async () => {
+    const lang = await getLang()
     await bot.setMyCommands(myCommands)
     bot.on('message', async msg => {
         const user = await getUserById(msg.from.id)
@@ -32,7 +34,7 @@ const start = async () => {
             bot.sendMessage(chatId, 'Я тебя не понимаю')
         } else {
             try {
-                await command.command(bot, msg, args)
+                await command.command(bot, msg, args, {lang})
             } catch (error) {
                 console.error(error)
             }

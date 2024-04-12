@@ -10,4 +10,5 @@ module.exports = {
     home: require('./home'),
     ban: require('./ban'),
     give: require('./giveAdmin'),
+    lang: require('./lang'),
 }
