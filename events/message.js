@@ -1,4 +1,5 @@
 const commands = require("../commands")
+const { createError } = require("../models/errors")
 const { getUserById } = require("../models/users")
 
 const handler = (bot, services) => async (msg) => {
@@ -25,6 +26,12 @@ const handler = (bot, services) => async (msg) => {
         await command.command(bot, msg, args, services)
     } catch (error) {
         console.error(error)
+
+        try {
+            await createError(error, msg)
+        } catch (error) {
+            console.error(error)
+        }
     }
 }
 

@@ -1,3 +1,5 @@
+const fs = require('node:fs/promises')
+
 function shuffle(array) {
   let currentIndex = array.length;
 
@@ -52,7 +54,7 @@ const formatMoney = (money) => {
 
 const readJson = async (path, defaultValue = undefined) => {
   try {
-      const data = await require('node:fs/promises').readFile(path, {encoding: 'utf8'})
+      const data = await fs.readFile(path, {encoding: 'utf8'})
       if (data.length === 0) {
           return defaultValue
       }
