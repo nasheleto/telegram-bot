@@ -6,7 +6,8 @@ const { USER_ROLE } = require('../constants')
 const meta = {
     description: 'Посмотреть ошибки',
     pattern: /^\/?(errors|ошибки)$/,
-    role: USER_ROLE.ADMIN
+    role: USER_ROLE.ADMIN,
+    displayInMenu: false
 }
 
 const handler = async (bot, msg) => {

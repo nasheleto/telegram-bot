@@ -12,4 +12,5 @@ module.exports = {
     give: require('./giveAdmin'),
     lang: require('./lang'),
     errors: require('./errors'),
+    help: require('./help'),
 }
