@@ -1,15 +1,16 @@
 const { getUserById } = require('../models/users')
 const command = require('./command')
 const { getErrors } = require('../models/errors')
+const { USER_ROLE } = require('../constants')
 
 const meta = {
     description: 'Посмотреть ошибки',
-    pattern: /^\/?(errors|ошибки)$/
+    pattern: /^\/?(errors|ошибки)$/,
+    role: USER_ROLE.ADMIN
 }
 
 const handler = async (bot, msg) => {
     const user = await getUserById(msg.from.id)
-    if (!user.isAdmin) return
 
     const errors = await getErrors()
     const toDisplay =  errors.slice(Math.max(errors.length - 10, 0))

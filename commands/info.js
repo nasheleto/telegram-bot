@@ -9,9 +9,10 @@ const meta = {
 
 const handler = async (bot, msg) => {
     await updateUser(msg.from.id, {lastName: msg.from.last_name, firstName: msg.from.first_name})
-    let user = await getUserById(msg.from.id)
-    let text = `
+    const user = await getUserById(msg.from.id)
+    const text = `
     Твой профиль:
+    Привелегии: ${user.role ?? 'PLAYER'}
     Имя: ${user.firstName}
     Фамилия: ${user.lastName ?? "Нет"}
     Никнейм: ${user.nickname}

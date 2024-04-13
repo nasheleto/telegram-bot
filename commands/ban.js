@@ -1,17 +1,15 @@
-const {getUserById, updateUser, getUserByNickname} = require('../models/users')
+const { USER_ROLE } = require('../constants')
+const {updateUser, getUserByNickname} = require('../models/users')
 const command = require('./command')
 
 const meta = {
     description: 'бан',  
     pattern: /^\/?(ban|бан)\s?.*$/,
     displayInMenu: false,
+    role: USER_ROLE.ADMIN
 }
 
 const handler = async (bot, msg, args) => {
-    const invoker = await getUserById(msg.from.id)
-    if (!invoker.isAdmin) {
-        return
-    }
     const nickname = args[0]
     const user = await getUserByNickname(nickname)
     if (user === null) {

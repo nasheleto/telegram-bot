@@ -19,7 +19,8 @@ const handler = async (bot, msg, args) => {
             lastName: msg.from.last_name ?? null,
             balance: 500,
             registeredAt: Date.now(),
-            referrerId
+            referrerId,
+            role: 'PLAYER'
         })
         user = await getUserById(msg.from.id)
     } 

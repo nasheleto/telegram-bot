@@ -1,4 +1,5 @@
 const commands = require("../commands")
+const { USER_ROLE } = require("../constants")
 const { createError } = require("../models/errors")
 const { getUserById } = require("../models/users")
 
@@ -10,7 +11,7 @@ const handler = (bot, services) => async (msg) => {
             return
         }
 
-        // do not respond to images
+        // do not respond to non-text messages, e.g. images
         if (msg.text === undefined) {
             return bot.sendMessage(msg.chat.id, 'О, милота!')
         }
@@ -20,6 +21,12 @@ const handler = (bot, services) => async (msg) => {
         const command = Object.values(commands).find(({ meta }) => meta.pattern.test(msg.text))
         if (command === undefined) {
             return await bot.sendMessage(msg.chat.id, 'Я тебя не понимаю')
+        }
+
+        // check user has access to the command
+        if (command.meta.role !== undefined) {
+            const role = USER_ROLE[user?.role ?? 'PLAYER'] ?? USER_ROLE.PLAYER
+            if (role < command.meta.role) return
         }
 
         // invoke the command
