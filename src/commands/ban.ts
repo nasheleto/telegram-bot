@@ -11,13 +11,13 @@ const meta: CommandMeta = {
     role: 'admin'
 }
 
-const handler: Command = async (bot, { msg, args, invoker }) => {
+const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
     
     const nickname = args[0]
     const user = await getUserByNickname(nickname)
     if (user === null) {
-        return bot.sendMessage(msg.chat.id, 'Такого пользователя нет')
+        return reply(lang.general_user_not_found_error[langCode])
     }
 
     let time
@@ -27,16 +27,16 @@ const handler: Command = async (bot, { msg, args, invoker }) => {
         case 'd': time = parseInt(timeSpecifier) * 24 * 60 * 60 * 1000; break
         case 'h': time = parseInt(timeSpecifier) * 60 * 60 * 1000; break
         case 'm': time = parseInt(timeSpecifier) * 60 * 1000; break
-        default: return await bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /ban <ник юзера> <количество>')
+        default: return await reply(lang.ban_invalid_command_error[langCode])
     }
 
     if (Number.isNaN(time) || time < 0) {
-        return bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /ban <ник юзера> <количество (d, h, m)>')
+        return reply(lang.ban_invalid_command_error[langCode])
     }
 
     const banExpiresAt = Date.now() + time
     await updateUser(user.id, {banExpiresAt})
-    await bot.sendMessage(msg.chat.id, `Вы успешно забанили ${nickname} до ${new Date(banExpiresAt)}`)
+    await reply(`${lang.ban_success_banned[langCode]} ${nickname} ${lang.ban_success_banned_until[langCode]} ${new Date(banExpiresAt)}`)
 }
 
 export default command(meta, handler)

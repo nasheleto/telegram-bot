@@ -28,6 +28,7 @@ export interface CommandContext {
     msg: CommandMessage
     args: string[]
     langCode: LangCode
+    reply: (text: string) => Promise<TelegramApi.Message>
 }
 
 export type Command = (bot: TelegramApi, ctx: CommandContext, services: Services) => Promise<unknown>

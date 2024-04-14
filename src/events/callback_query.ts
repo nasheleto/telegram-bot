@@ -17,6 +17,7 @@ const handler = (bot: TelegramApi, services: Services) => async (msg: TelegramAp
     const data = msg.data
     const chatId = msg.message.chat.id
     if (data === '/again') {
+        // @ts-ignore
         return commands.game.command(bot, {
             msg: msg.message as CommandMessage,
             args: [],

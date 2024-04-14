@@ -9,10 +9,10 @@ const meta: CommandMeta = {
     pattern: /^\/?(balance|баланс)$/
 }
 
-const handler: Command = async (bot, { msg, invoker }) => {
+const handler: Command = async (bot, { msg, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
  
-    await bot.sendMessage(msg.chat.id, `Твой баланс $${formatMoney(invoker.balance)}`)
-}
+    await reply(`${lang.balance[langCode]} $${formatMoney(invoker.balance)}`)
+} 
 
 export default command(meta, handler)
