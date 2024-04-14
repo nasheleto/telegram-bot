@@ -1,7 +1,8 @@
-import {getUserById, updateUser} from '../models/users'
-import {shuffle, formatMoney} from '../utils'
-import command from './command'
+import { InvokerMissingError } from '../errors/commands'
+import { updateUser } from '../models/users'
 import { Command, CommandMeta } from '../types'
+import { formatMoney, shuffle } from '../utils'
+import command from './command'
 
 const meta: CommandMeta = {
     description: 'Казино', 
@@ -9,21 +10,18 @@ const meta: CommandMeta = {
     displayInMenu: false,
 }
 
-const handler: Command = async (bot, msg, args, {lang}) => {
-    const user = await getUserById(msg.from.id)
-    if (user === null) {
-        return bot.sendMessage(msg.chat.id, 'Чтобы использовать эту команду, напишите /start')
-    }
+const handler: Command = async (bot, { msg, args, invoker, langCode }, { lang }) => {
+    if (invoker === null) throw new InvokerMissingError()
 
     const multipliers = [0, 0.5, 0, 0, 2, 5, 1, 1.5, 0.75, 0, 0.25, 10, 2, 100, 2, 5, 1, 0.7, 1, 0.9, 0.52]
 
     const bet = Number(args[0])
 
     if (Number.isNaN(bet)){
-        return bot.sendMessage(msg.chat.id, lang.casino_invalid_command_error[user.lang ?? msg.from.language_code ?? "en"])
+        return bot.sendMessage(msg.chat.id, lang.casino_invalid_command_error[langCode])
     }
 
-    if (bet > user.balance) {
+    if (bet > invoker.balance) {
         return bot.sendMessage(msg.chat.id, "У вас недостаточно средств на балансе")
     }
 
@@ -44,7 +42,7 @@ const handler: Command = async (bot, msg, args, {lang}) => {
     const result = multiplier * bet
 
     const update = {
-        balance: user.balance - bet + result,
+        balance: invoker.balance - bet + result,
     }
 
     await updateUser(msg.from.id, update)

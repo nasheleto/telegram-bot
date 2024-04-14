@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises'
+import fs from 'node:fs/promises';
 
 export function shuffle(array: unknown[]) {
   let currentIndex = array.length;

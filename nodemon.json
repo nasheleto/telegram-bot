@@ -1,4 +1,6 @@
 {
-    "verbose": true,
-    "ignore": ["db"]
-  }
+  "verbose": true,
+  "ext": "ts",
+  "ignore": ["db", "node_modules"],
+  "exec": "ts-node ./main.ts"
+}

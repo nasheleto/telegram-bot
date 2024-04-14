@@ -1,14 +1,16 @@
-const {createUser, getUserById, updateUser} = require('../models/users')
-const command = require('./command')
-const {formatMoney} = require('../utils')
+import { Command, CommandMeta } from "../types"
 
-const meta = {
+import { createUser, getUserById, updateUser } from '../models/users'
+import { formatMoney } from '../utils'
+import command from './command'
+
+const meta: CommandMeta = {
     description: 'Приветствие и команды',
     pattern: /^\/?(start|старт)\s?.*$/,
 }
 
-const handler = async (bot, msg, args) => {
-    let user = await getUserById(msg.from.id)
+const handler: Command = async (bot, { msg, args, invoker, langCode }) => {
+    let user = invoker
     const userExists = user !== null
     const referrerId = args[0] !== undefined ? Number(args[0]) : undefined
     if (!userExists) {
@@ -20,12 +22,15 @@ const handler = async (bot, msg, args) => {
             balance: 500,
             registeredAt: Date.now(),
             referrerId,
-            role: 'PLAYER',
-            lang: msg.from.language_code ?? 'ru'
+            role: 'player',
+            langCode: langCode
         })
         user = await getUserById(msg.from.id)
-    } 
+    }
 
+    if (user === null) {
+        throw new Error('User does not exist')
+    }
     
     await bot.sendSticker(msg.chat.id, 'https://chpic.su/_data/stickers/h/hdjajs78_h/hdjajs78_h_002.webp?v=1712145304')
     await bot.sendMessage(msg.chat.id, `Привет, ${user.nickname}. Твой баланс: $${formatMoney(user.balance)}`)
@@ -48,4 +53,4 @@ const handler = async (bot, msg, args) => {
     await bot.sendMessage(referrerId, `"${user.nickname}" зарегистрировался по ваше ссылке! Вы получили бонус $${formatMoney(10000)}`)
 }
 
-module.exports = command(meta, handler)
+export default command(meta, handler)

@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises'
 import path from 'path'
+import { UserRole } from '../types'
 import { readJson } from '../utils'
+import { LangCode } from './langs'
 
 export interface User {
     id: number
@@ -8,11 +10,12 @@ export interface User {
     firstName: string
     lastName: string | null
     balance: number
+    role?: UserRole
+    langCode: LangCode
+    referrerId?: number
     registeredAt: number
     lastBonusAt?: number 
     lastPensionAt?: number
-    role?: 'ADMIN' | 'PLAYER'
-    lang?: string
     banExpiresAt?: number
 }
 
