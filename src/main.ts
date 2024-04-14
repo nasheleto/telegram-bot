@@ -27,6 +27,8 @@ const start = async () => {
 
     bot.on('message', onMessage(bot, services))
     bot.on('callback_query', onCallbackQuery(bot, services))
+
+    console.log('Bot is listening...')
 }
 
 start()
