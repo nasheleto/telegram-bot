@@ -1,11 +1,12 @@
 import casino from './casino'
+import game from './game'
 import start from './start'
 
  const commands = {
     start: start, 
     // info: require('./info'),
     // balance: require('./balance'),
-    // game: require('./game'),
+    game: game,
     // nickname: require('./nickname'),
     casino: casino,
     // bonus: require('./bonus'),

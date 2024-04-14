@@ -26,7 +26,7 @@ const start = async () => {
     await bot.setMyCommands(myCommands)
 
     bot.on('message', onMessage(bot, services))
-    bot.on('callback_query', onCallbackQuery(bot))
+    bot.on('callback_query', onCallbackQuery(bot, services))
 }
 
 start()
