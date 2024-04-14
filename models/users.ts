@@ -19,7 +19,7 @@ export interface User {
     banExpiresAt?: number
 }
 
-const dbPath = path.resolve(__dirname, '..', 'db', 'users.json')
+const dbPath = path.resolve(process.cwd(), 'db', 'users.json')
 
 export const getUsers = async () => {
     const users = await readJson(dbPath, [])

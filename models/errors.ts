@@ -3,7 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'path'
 import { readJson } from '../utils'
 
-const dbPath = path.resolve(__dirname, '..', 'db', 'errors.json')
+const dbPath = path.resolve(process.cwd(), 'db', 'errors.json')
 
 export interface TrackedError {
     message: string

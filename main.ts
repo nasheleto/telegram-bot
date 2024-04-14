@@ -8,17 +8,17 @@ import onMessage from './events/message'
 import { getLang } from './models/langs'
 import { Services } from './types'
 
-const token = process.env.TELEGRAM_TOKEN ?? ''
-const bot = new TelegramApi(token, { polling: true })
-
-const myCommands = Object.entries(commands)
-    .filter(([_, { meta }]) => meta.displayInMenu !== false)
-    .map(([command, { meta }]) => ({
-        command,
-        description: meta.description
-    }))
-
 const start = async () => {
+    const token = process.env.TELEGRAM_TOKEN ?? ''
+    const bot = new TelegramApi(token, { polling: true })
+
+    const myCommands = Object.entries(commands)
+        .filter(([_, { meta }]) => meta.displayInMenu !== false)
+        .map(([command, { meta }]) => ({
+            command,
+            description: meta.description
+        }))
+
     const services: Services = {
         lang: getLang()
     }
