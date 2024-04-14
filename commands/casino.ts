@@ -1,14 +1,15 @@
-const {getUserById, updateUser} = require('../models/users')
-const {shuffle, formatMoney} = require('../utils')
-const command = require('./command')
+import {getUserById, updateUser} from '../models/users'
+import {shuffle, formatMoney} from '../utils'
+import command from './command'
+import { Command, CommandMeta } from '../types'
 
-const meta = {
+const meta: CommandMeta = {
     description: 'Казино', 
     pattern: /^\/?(казино|casino)\s?.*$/,
     displayInMenu: false,
 }
 
-const handler = async (bot, msg, args, {lang}) => {
+const handler: Command = async (bot, msg, args, {lang}) => {
     const user = await getUserById(msg.from.id)
     if (user === null) {
         return bot.sendMessage(msg.chat.id, 'Чтобы использовать эту команду, напишите /start')
@@ -51,4 +52,4 @@ const handler = async (bot, msg, args, {lang}) => {
     bot.sendMessage(msg.chat.id, `Выпал X${multiplier}. Твой баланс составляет $${formatMoney(update.balance)}`)
 }
 
-module.exports = command(meta, handler)
+export default command(meta, handler)

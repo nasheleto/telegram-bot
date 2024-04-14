@@ -20,7 +20,8 @@ const handler = async (bot, msg, args) => {
             balance: 500,
             registeredAt: Date.now(),
             referrerId,
-            role: 'PLAYER'
+            role: 'PLAYER',
+            lang: msg.from.language_code ?? 'ru'
         })
         user = await getUserById(msg.from.id)
     } 

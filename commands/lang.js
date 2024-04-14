@@ -11,8 +11,8 @@ const handler = async (bot, msg, args, {lang}) => {
     const langs = ['ru', 'en']
     const code = args[0]
     if (!langs.includes(code)) {
-        let text = `${lang.lang_switch_error[user.lang ?? msg.from.language_code ?? "en"]} ${code} \n`
-        text += `${lang.lang_available_languages[user.lang ?? msg.from.language_code ?? "en"]}:\n`
+        let text = `${lang.lang_switch_error[user.lang ?? msg.from.language_code ?? "ru"]} ${code} \n`
+        text += `${lang.lang_available_languages[user.lang ?? msg.from.language_code ?? "ru"]}:\n`
         text += `${langs.join('\n')}`
         return await bot.sendMessage(msg.from.id, text)
     }

@@ -1,10 +1,12 @@
-module.exports = {
+import casino from './casino'
+
+ const commands = {
     start: require('./start'), 
     info: require('./info'),
     balance: require('./balance'),
     game: require('./game'),
     nickname: require('./nickname'),
-    casino: require('./casino'),
+    casino: casino,
     bonus: require('./bonus'),
     pension: require('./pension'),
     home: require('./home'),
@@ -14,3 +16,4 @@ module.exports = {
     errors: require('./errors'),
     help: require('./help'),
 }
+export default commands

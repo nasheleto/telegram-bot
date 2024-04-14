@@ -1,6 +1,6 @@
-const fs = require('node:fs/promises')
+import fs from 'node:fs/promises'
 
-function shuffle(array) {
+export function shuffle(array: unknown[]) {
   let currentIndex = array.length;
 
   while (currentIndex != 0) {
@@ -14,7 +14,7 @@ function shuffle(array) {
 }
 
 
-const formatTime = (time) => {
+export const formatTime = (time: number) => {
   const hours = Math.floor((time / (1000 * 60 * 60)) % 24)
   const minutes = Math.floor((time / (1000 * 60)) % 60)
   const seconds = Math.floor((time / 1000) % 60)
@@ -22,7 +22,7 @@ const formatTime = (time) => {
   return `${hours} ч. ${minutes} мин. ${seconds} сек.`
 }
 
-const formatTimeWeek = (time) => {
+export const formatTimeWeek = (time: number) => {
   const day = Math.floor((time / (1000 * 60 * 60 * 24)) % 7)
   const hours = Math.floor((time / (1000 * 60 * 60)) % 24)
   const minutes = Math.floor((time / (1000 * 60)) % 60)
@@ -31,7 +31,7 @@ const formatTimeWeek = (time) => {
   return `${day} дн. ${hours} ч. ${minutes} мин. ${seconds} сек.`
 }
 
-const formatMoney = (money) => {
+export const formatMoney = (money: number) => {
   if (Math.abs(money) < 1000) {
     return money
   }
@@ -52,7 +52,7 @@ const formatMoney = (money) => {
   }
 }
 
-const readJson = async (path, defaultValue = undefined) => {
+export const readJson = async (path: string, defaultValue: unknown | undefined = undefined) => {
   try {
       const data = await fs.readFile(path, {encoding: 'utf8'})
       if (data.length === 0) {
@@ -60,7 +60,8 @@ const readJson = async (path, defaultValue = undefined) => {
       }
 
       return JSON.parse(data)
-  } catch (error) {
+  } catch (e) {
+      const error = e as NodeJS.ErrnoException
       if (error.code === 'ENOENT') {
           if (defaultValue !== undefined) {
             await fs.writeFile(path, JSON.stringify(defaultValue))
@@ -71,12 +72,4 @@ const readJson = async (path, defaultValue = undefined) => {
           throw error
       }
   }
-}
-
-module.exports = {
-    shuffle,
-    formatTime,
-    formatTimeWeek,
-    formatMoney,
-    readJson
 }
