@@ -1,20 +1,25 @@
 import casino from './casino'
 import game from './game'
+import home from './home'
+import info from './info'
+import lang from './lang'
+import nickname from './nickname'
+import pension from './pension'
 import start from './start'
 
  const commands = {
     start: start, 
-    // info: require('./info'),
+    info: info,
     // balance: require('./balance'),
     game: game,
-    // nickname: require('./nickname'),
+    nickname: nickname,
     casino: casino,
     // bonus: require('./bonus'),
-    // pension: require('./pension'),
-    // home: require('./home'),
+    pension: pension,
+    home: home,
     // ban: require('./ban'),
     // give: require('./giveAdmin'),
-    // lang: require('./lang'),
+    lang: lang,
     // errors: require('./errors'),
     // help: require('./help'),
 }

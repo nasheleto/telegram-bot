@@ -1,13 +1,18 @@
-const {updateUser, getUserByNickname} = require('../models/users')
-const command = require('./command')
+import { InvokerMissingError } from "../errors/commands"
+import { Command, CommandMeta } from "../types"
 
-const meta = {
+import { getUserByNickname, updateUser } from '../models/users'
+import command from './command'
+
+const meta: CommandMeta = {
     description: 'Изменить никнейм',  
     pattern: /^\/?(nick|nickname|ник|никнейм)\s?.*$/,
     displayInMenu: true,
 }
 
-const handler = async (bot, msg, args) => {
+const handler: Command = async (bot, { msg, args, invoker }) => {
+    if (invoker === null) throw new InvokerMissingError()
+
     const nickname = args.join(' ')
 
     if (!nickname) {
@@ -39,4 +44,4 @@ const handler = async (bot, msg, args) => {
     }
 }
 
-module.exports = command(meta, handler)
+export default command(meta, handler)
