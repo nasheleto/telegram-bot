@@ -12,7 +12,7 @@ const handler = async (bot, msg) => {
     const user = await getUserById(msg.from.id)
     const text = `
     Твой профиль:
-    Привелегии: ${user.role ?? 'PLAYER'}
+    Роль: ${user.role ?? 'PLAYER'}
     Имя: ${user.firstName}
     Фамилия: ${user.lastName ?? "Нет"}
     Никнейм: ${user.nickname}

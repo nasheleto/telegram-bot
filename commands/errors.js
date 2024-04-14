@@ -1,4 +1,3 @@
-const { getUserById } = require('../models/users')
 const command = require('./command')
 const { getErrors } = require('../models/errors')
 const { USER_ROLE } = require('../constants')
@@ -11,8 +10,6 @@ const meta = {
 }
 
 const handler = async (bot, msg) => {
-    const user = await getUserById(msg.from.id)
-
     const errors = await getErrors()
     const toDisplay =  errors.slice(Math.max(errors.length - 10, 0))
     let text = toDisplay
