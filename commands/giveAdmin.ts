@@ -1,23 +1,27 @@
-const { USER_ROLE } = require('../constants')
-const {updateUser, getUserByNickname} = require('../models/users')
-const command = require('./command')
+import { InvokerMissingError } from "../errors/commands"
+import { getUserByNickname, updateUser } from '../models/users'
+import { Command, CommandMeta } from "../types"
 
-const meta = {
+import command from './command'
+
+const meta: CommandMeta = {
     description: 'Выдать права администратора',  
     pattern: /^\/?(выдать|give|забрать)\s?.*$/,
     displayInMenu: false,
-    role: USER_ROLE.ADMIN
+    role: 'admin'
 }
 
-const handler = async (bot, msg, args) => {
+const handler: Command = async (bot, { msg, args, invoker }) => {
+    if (invoker === null) throw new InvokerMissingError()
+    
     const nickname = args[0]
     const user = await getUserByNickname(nickname)
     if (user === null) {
         return bot.sendMessage(msg.from.id, `Такого пользователя не существует`)
     }
     const isAdmin = !msg.text.startsWith('забрать')
-    await updateUser(user.id, { role: isAdmin ? 'ADMIN' : 'PLAYER' })
+    await updateUser(user.id, { role: isAdmin ? 'admin' : 'player' })
     await bot.sendMessage(msg.from.id, `Вы ${isAdmin ? 'дали' : 'забрали'} админку ${nickname}`)
 }
 
-module.exports = command(meta, handler)
+export default command(meta, handler)

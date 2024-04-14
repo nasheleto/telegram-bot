@@ -1,27 +1,32 @@
-const { USER_ROLE } = require('../constants')
-const {updateUser, getUserByNickname} = require('../models/users')
-const command = require('./command')
+import { Command, CommandMeta } from "../types"
 
-const meta = {
+import { InvokerMissingError } from "../errors/commands"
+import { getUserByNickname, updateUser } from '../models/users'
+import command from './command'
+
+const meta: CommandMeta = {
     description: 'бан',  
     pattern: /^\/?(ban|бан)\s?.*$/,
     displayInMenu: false,
-    role: USER_ROLE.ADMIN
+    role: 'admin'
 }
 
-const handler = async (bot, msg, args) => {
+const handler: Command = async (bot, { msg, args, invoker }) => {
+    if (invoker === null) throw new InvokerMissingError()
+    
     const nickname = args[0]
     const user = await getUserByNickname(nickname)
     if (user === null) {
         return bot.sendMessage(msg.chat.id, 'Такого пользователя нет')
     }
-    
+
     let time
 
-    switch(args[1][args[1].length - 1]) {
-        case 'd': time = parseInt(args[1]) * 24 * 60 * 60 * 1000; break
-        case 'h': time = parseInt(args[1]) * 60 * 60 * 1000; break
-        case 'm': time = parseInt(args[1]) * 60 * 1000; break
+    const timeSpecifier = args[1]
+    switch(timeSpecifier[timeSpecifier.length - 1]) {
+        case 'd': time = parseInt(timeSpecifier) * 24 * 60 * 60 * 1000; break
+        case 'h': time = parseInt(timeSpecifier) * 60 * 60 * 1000; break
+        case 'm': time = parseInt(timeSpecifier) * 60 * 1000; break
         default: return await bot.sendMessage(msg.chat.id, 'Команда неправильно использована. Используйте /ban <ник юзера> <количество>')
     }
 
@@ -34,4 +39,4 @@ const handler = async (bot, msg, args) => {
     await bot.sendMessage(msg.chat.id, `Вы успешно забанили ${nickname} до ${new Date(banExpiresAt)}`)
 }
 
-module.exports = command(meta, handler)
+export default command(meta, handler)

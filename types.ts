@@ -13,6 +13,7 @@ export interface Services {
 
 export type CommandMessage = TelegramApi.Message & {
     from: TelegramUser
+    text: string
 }
 
 export interface CommandMeta {

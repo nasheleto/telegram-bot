@@ -1,5 +1,10 @@
+import balance from './balance'
+import ban from './ban'
+import bonus from './bonus'
 import casino from './casino'
+import errors from './errors'
 import game from './game'
+import giveAdmin from './giveAdmin'
 import home from './home'
 import info from './info'
 import lang from './lang'
@@ -10,18 +15,17 @@ import start from './start'
  const commands = {
     start: start, 
     info: info,
-    // balance: require('./balance'),
+    balance: balance,
     game: game,
     nickname: nickname,
     casino: casino,
-    // bonus: require('./bonus'),
+    bonus: bonus,
     pension: pension,
     home: home,
-    // ban: require('./ban'),
-    // give: require('./giveAdmin'),
+    ban: ban,
+    give: giveAdmin,
     lang: lang,
-    // errors: require('./errors'),
-    // help: require('./help'),
+    errors: errors,
 }
 
 export default commands

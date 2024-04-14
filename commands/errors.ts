@@ -1,15 +1,19 @@
-const command = require('./command')
-const { getErrors } = require('../models/errors')
-const { USER_ROLE } = require('../constants')
+import { InvokerMissingError } from "../errors/commands"
+import { getErrors } from '../models/errors'
+import { Command, CommandMeta } from "../types"
 
-const meta = {
+import command from './command'
+
+const meta: CommandMeta = {
     description: 'Посмотреть ошибки',
     pattern: /^\/?(errors|ошибки)$/,
-    role: USER_ROLE.ADMIN,
+    role: "admin",
     displayInMenu: false
 }
 
-const handler = async (bot, msg) => {
+const handler: Command = async (bot, { msg, invoker }) => {
+    if (invoker === null) throw new InvokerMissingError()
+
     const errors = await getErrors()
     const toDisplay =  errors.slice(Math.max(errors.length - 10, 0))
     let text = toDisplay
@@ -23,4 +27,4 @@ const handler = async (bot, msg) => {
     })
 }
 
-module.exports = command(meta, handler)
+export default command(meta, handler)
