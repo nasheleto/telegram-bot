@@ -10,6 +10,7 @@ import info from './info'
 import lang from './lang'
 import nickname from './nickname'
 import pension from './pension'
+import slot from './slot'
 import start from './start'
 
  const commands = {
@@ -26,6 +27,7 @@ import start from './start'
     give: giveAdmin,
     lang: lang,
     errors: errors,
+    slot: slot,
 }
 
 export default commands
