@@ -10,14 +10,14 @@ const meta: CommandMeta = {
     pattern: /^\/?(pension|пенсия)\s?.*$/,
 }
 
-const handler: Command = async (bot, { msg, invoker }) => {
+const handler: Command = async (bot, { msg, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
 
     const week = 1000 * 60 * 60 * 24 * 7
     const time = Date.now() - (invoker.lastPensionAt ?? 0)
 
     if (time < week) {
-        return bot.sendMessage(msg.from.id, `Пенсия еще недоступна, её можно забрать через ${utils.formatTimeWeek(week - time)} `)
+        return reply(`${lang.pension_not_available[langCode]} ${utils.formatTimeWeek(week - time)} `)
     }
     const x = Math.floor((Date.now() - invoker.registeredAt) / 1000 / 60 / 60 / 24 / 7 / 4)
 
@@ -27,7 +27,7 @@ const handler: Command = async (bot, { msg, invoker }) => {
     }
 
     await updateUser(msg.from.id, update)
-    bot.sendMessage(msg.from.id, `Поздравляю! Пенсия $${500 * (x+1)} собрана. Теперь твой баланс составляет $${utils.formatMoney(update.balance)}`)
+    reply(`${lang.pension_has_been_collected_pt1[langCode]} $${500 * (x+1)} ${lang.pension_has_been_collected_pt2[langCode]} $${utils.formatMoney(update.balance)}`)
 }
 
 export default command(meta, handler)

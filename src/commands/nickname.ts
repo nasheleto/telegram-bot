@@ -10,36 +10,36 @@ const meta: CommandMeta = {
     displayInMenu: true,
 }
 
-const handler: Command = async (bot, { msg, args, invoker }) => {
+const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
 
     const nickname = args.join(' ')
 
     if (!nickname) {
-        return await bot.sendMessage(msg.chat.id, `Невозможно установить такой никнейм. Попробуйте /nickname <твой ник>`)
+        return await reply(`${lang.nickname_empty_error[langCode]}`)
     }
 
     if (nickname.length > 16) {
-        return await bot.sendMessage(msg.chat.id, `Невозможно установить никнейм. Максимальная длина никнейма 16 символов.`)
+        return await reply(`${lang.nickname_length_error[langCode]}`)
     }
 
     if (/^[\w\sа-я]+$/i.test(nickname) === false) {
-        return await bot.sendMessage(msg.chat.id, `Невозможно установить никнейм. Используйте только буквы, цифры и нижнее подчеркивание`)
+        return await reply(`${lang.nickname_charset_error[langCode]}`)
     }
     
     const user = await getUserByNickname(nickname)
     if (user === null) {
         const success = await updateUser(msg.from.id, {nickname})
         if (success) {
-            await bot.sendMessage(msg.chat.id, `Вы изменили свой никнейм на ${nickname}`)
+            await reply(`${lang.nickname_change_success[langCode]} ${nickname}`)
         } else {
-            await bot.sendMessage(msg.chat.id, `Не удалось изменить никнейм`)
+            await reply(`${lang.nickname_change_error[langCode]}`)
         }
     } else {
         if (user.id === msg.from.id) {
-            await bot.sendMessage(msg.chat.id, `Вы уже использовали этот никнейм`)
+            await reply(`${lang.nickname_already_used_by_you[langCode]}`)
         } else {
-            await bot.sendMessage(msg.chat.id, `Этот никнейм уже использован`)
+            await reply(`${lang.nickname_already_used[langCode]}`)
         }
     }
 }

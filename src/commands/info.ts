@@ -10,21 +10,21 @@ const meta: CommandMeta = {
     pattern: /^\/?(info|инфо)$/
 }
 
-const handler: Command = async (bot, { msg, invoker }) => {
+const handler: Command = async (bot, { msg, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
 
     await updateUser(msg.from.id, {lastName: msg.from.last_name, firstName: msg.from.first_name})
 
     const text = `
-    Твой профиль:
-    Роль: ${invoker.role ?? 'player'}
-    Имя: ${invoker.firstName}
-    Фамилия: ${invoker.lastName ?? "Нет"}
-    Никнейм: ${invoker.nickname}
-    Баланс: $${formatMoney(invoker.balance)}
-    Дней со времени регистрации: ${Math.floor((Date.now() - invoker.registeredAt) / 1000 / 60 / 60 / 24)}
+    ${lang.info_profile[langCode]}
+    ${lang.info_profile_role[langCode]} ${invoker.role ?? 'player'}
+    ${lang.info_profile_name[langCode]} ${invoker.firstName}
+    ${lang.info_profile_lastname[langCode]} ${invoker.lastName ?? `${lang.general_no[langCode]}`}
+    ${lang.info_profile_nickname[langCode]} ${invoker.nickname}
+    ${lang.info_profile_balance[langCode]} $${formatMoney(invoker.balance)}
+    ${lang.info_profile_registration_days[langCode]} ${Math.floor((Date.now() - invoker.registeredAt) / 1000 / 60 / 60 / 24)}
     `
-    await bot.sendMessage(msg.chat.id, text)
+    await reply( text)
 }
 
 export default command(meta, handler)

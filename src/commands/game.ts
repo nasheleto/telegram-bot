@@ -16,7 +16,7 @@ const handler: Command = async (bot, { msg, invoker }) => {
     await bot.sendMessage(msg.chat.id, 'Сейчас я загадаю цифру от 0 до 9, и ты должен её угадать')
     const randomNumber = Math.floor(Math.random() * 10)
     chats[msg.chat.id] = randomNumber
-    await bot.sendMessage(msg.chat.id, 'Отгадывай', gameOptions)
+    await bot.sendMessage(msg.chat.id, 'Можешь угадывать', gameOptions)
 }
 
 export default command(meta, handler)

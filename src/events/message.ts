@@ -51,7 +51,7 @@ const handler = (bot: TelegramApi, services: Services) => async (msg: TelegramAp
             args,
             invoker: user,
             langCode: user?.langCode ?? DEFAULT_LANG,
-            reply: (text) => bot.sendMessage(msg.chat.id, text)
+            reply: (text, options) => bot.sendMessage(msg.chat.id, text, options)
         }
         await command.command(bot, context, services)
     } catch (e) {

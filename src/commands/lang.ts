@@ -10,7 +10,7 @@ const meta: CommandMeta = {
     pattern: /^\/?(lang|язык)\s?.*$/
 }
 
-const handler: Command = async (bot, { msg, args, langCode, invoker }, { lang }) => {
+const handler: Command = async (bot, { msg, args, langCode, invoker, reply}, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
 
     const code = args[0] as LangCode 
@@ -19,11 +19,11 @@ const handler: Command = async (bot, { msg, args, langCode, invoker }, { lang })
         let text = `${lang.lang_switch_error[langCode]} ${code} \n`
         text += `${lang.lang_available_languages[langCode]}:\n`
         text += `${LANG_CODES.join('\n')}`
-        return await bot.sendMessage(msg.from.id, text)
+        return await reply(text)
     }
 
     await updateUser(msg.from.id, {langCode: code})
-    await bot.sendMessage(msg.from.id, `${lang.lang_switch_success[code]} ${code}`)
+    await reply(`${lang.lang_switch_success[code]} ${code}`)
 }
 
 export default command(meta, handler)

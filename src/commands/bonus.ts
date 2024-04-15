@@ -10,13 +10,13 @@ const meta: CommandMeta = {
     pattern: /^\/?(bonus|бонус)\s?.*$/,
 }
 
-const handler: Command = async (bot, { msg, invoker }) => {
+const handler: Command = async (bot, { msg, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
 
     const day = 1000 * 60 * 60 * 24 
     const time = Date.now() - (invoker.lastBonusAt ?? 0)
     if (time < day) {
-        return bot.sendMessage(msg.from.id, `Бонус еще недоступен, его можно забрать через ${utils.formatTime(day - time)}`)
+        return reply(`${lang.bonus_not_available[langCode]} ${utils.formatTime(day - time)}`)
     }
     const bonus = 1500
     const update = {
@@ -24,7 +24,7 @@ const handler: Command = async (bot, { msg, invoker }) => {
         lastBonusAt: Date.now()
     }
     await updateUser(msg.from.id, update)
-    bot.sendMessage(msg.from.id, `Поздравляю! Бонус $1500 собран. Теперь твой баланс составляет $${utils.formatMoney(update.balance)}`)
+    reply(`${lang.bonus_has_been_collected[langCode]} $${utils.formatMoney(update.balance)}`)
 }
 
 export default command(meta, handler)

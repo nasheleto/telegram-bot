@@ -9,7 +9,7 @@ const meta: CommandMeta = {
     pattern: /^\/?(start|старт)\s?.*$/,
 }
 
-const handler: Command = async (bot, { msg, args, invoker, langCode }) => {
+const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { lang }) => {
     let user = invoker
     const userExists = user !== null
     const referrerId = args[0] !== undefined ? Number(args[0]) : undefined
@@ -33,15 +33,8 @@ const handler: Command = async (bot, { msg, args, invoker, langCode }) => {
     }
     
     await bot.sendSticker(msg.chat.id, 'https://chpic.su/_data/stickers/h/hdjajs78_h/hdjajs78_h_002.webp?v=1712145304')
-    await bot.sendMessage(msg.chat.id, `Привет, ${user.nickname}. Твой баланс: $${formatMoney(user.balance)}`)
-    await bot.sendMessage(msg.chat.id, `Доступные команды: 
-    /start — Стартовая команда
-    /info — Вся информация про пользователя
-    /game — Игра
-    /nickname ►твой ник◄ — Изменить ник
-    /casino ►ставка◄ (например "казино 100") — Казино
-    /bonus — Забрать бонус (доступен каждые 24 часа)
-    /pension - Забрать пенсию  (доступна каждую неделю)`)
+    await reply(`${lang.start_hello[langCode]} ${user.nickname}. ${lang.balance[langCode]} $${formatMoney(user.balance)}`)
+    await reply(`${lang.start_commands[langCode]}`)
 
 
     if(userExists || referrerId === undefined) return
@@ -50,7 +43,7 @@ const handler: Command = async (bot, { msg, args, invoker, langCode }) => {
     if (referrer === null) return
 
     await updateUser(referrerId, { balance: referrer.balance + 10000 })
-    await bot.sendMessage(referrerId, `"${user.nickname}" зарегистрировался по ваше ссылке! Вы получили бонус $${formatMoney(10000)}`)
+    await bot.sendMessage(referrerId, `"${user.nickname}" ${lang.start_referral_bonus[langCode]} $${formatMoney(10000)}`)
 }
 
 export default command(meta, handler)

@@ -11,17 +11,17 @@ const meta: CommandMeta = {
     role: 'admin'
 }
 
-const handler: Command = async (bot, { msg, args, invoker }) => {
+const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
     
     const nickname = args[0]
     const user = await getUserByNickname(nickname)
     if (user === null) {
-        return bot.sendMessage(msg.from.id, `Такого пользователя не существует`)
+        return reply(lang.general_user_not_found_error[langCode])
     }
     const isAdmin = !msg.text.startsWith('забрать')
     await updateUser(user.id, { role: isAdmin ? 'admin' : 'player' })
-    await bot.sendMessage(msg.from.id, `Вы ${isAdmin ? 'дали' : 'забрали'} админку ${nickname}`)
+    await reply(`${isAdmin ? lang.giveAdmin_gave[langCode] : lang.giveAdmin_removed[langCode]} ${nickname}`)
 }
 
 export default command(meta, handler)

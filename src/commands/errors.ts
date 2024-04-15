@@ -11,7 +11,7 @@ const meta: CommandMeta = {
     displayInMenu: false
 }
 
-const handler: Command = async (bot, { msg, invoker }) => {
+const handler: Command = async (bot, { msg, invoker, reply }) => {
     if (invoker === null) throw new InvokerMissingError()
 
     const errors = await getErrors()
@@ -22,7 +22,7 @@ const handler: Command = async (bot, { msg, invoker }) => {
 
     text = `1 - ${toDisplay.length} of ${errors.length}\n\n` + text
 
-    await bot.sendMessage(msg.chat.id, text, {
+    await reply(text, {
         parse_mode: 'HTML'
     })
 }

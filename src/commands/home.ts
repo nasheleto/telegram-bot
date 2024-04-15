@@ -7,14 +7,14 @@ const meta: CommandMeta = {
     pattern: /^\/?(home|дом)\s?.*$/,
 }
 
-const handler: Command = async (bot, { msg, invoker }) => {
+const handler: Command = async (bot, { msg, invoker, langCode, reply }, { lang }) => {
     if (invoker === null) throw new InvokerMissingError()
 
         let text = `
-        ${Date.now() - (invoker.lastBonusAt ?? 0) > (1000 * 60 * 60 * 24) ? '🟢': '🔴'} Бонус /bonus
-${Date.now() - (invoker.lastPensionAt ?? 0) > (1000 * 60 * 60 * 24 * 7) ? '🟢': '🔴'} Пенсия /pension
+        ${Date.now() - (invoker.lastBonusAt ?? 0) > (1000 * 60 * 60 * 24) ? '🟢': '🔴'} ${lang.home_bonus[langCode]}
+${Date.now() - (invoker.lastPensionAt ?? 0) > (1000 * 60 * 60 * 24 * 7) ? '🟢': '🔴'} ${lang.home_pension[langCode]}
         `
-        await bot.sendMessage(msg.chat.id, text)
+        await reply(text)
 }
 
 export default command(meta, handler)
