@@ -7,6 +7,7 @@ import game from './game'
 import giveAdmin from './giveAdmin'
 import home from './home'
 import info from './info'
+import key from './key'
 import lang from './lang'
 import nickname from './nickname'
 import pension from './pension'
@@ -28,6 +29,7 @@ import start from './start'
     lang: lang,
     errors: errors,
     slot: slot,
+    key
 }
 
 export default commands
