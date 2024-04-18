@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv'
-dotenv.config()
+process.env.NODE_ENV = process.env.NODE_ENV ?? 'local'
+dotenv.config({path: `.env.${process.env.NODE_ENV}`})
 
 import mongoose from 'mongoose'
 import TelegramApi from 'node-telegram-bot-api'
@@ -10,6 +11,7 @@ import { getLang } from './models/langs'
 import { Services } from './types'
 
 const start = async () => {
+    console.log(`Using ${process.env.NODE_ENV}`)
     const token = process.env.TELEGRAM_TOKEN ?? ''
     const bot = new TelegramApi(token, { polling: true })
 

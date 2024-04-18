@@ -2,4 +2,6 @@
 .idea
 db
 .env
+.env.development
+.env.local
 dist
