@@ -35,7 +35,7 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
     }
 
     const banExpiresAt = Date.now() + time
-    await updateUser(user.id, {banExpiresAt})
+    await updateUser(user._id, {banExpiresAt})
     await reply(`${lang.ban_success_banned[langCode]} ${nickname} ${lang.ban_success_banned_until[langCode]} ${new Date(banExpiresAt)}`)
 }
 

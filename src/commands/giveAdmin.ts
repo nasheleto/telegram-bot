@@ -20,7 +20,7 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
         return reply(lang.general_user_not_found_error[langCode])
     }
     const isAdmin = !msg.text.startsWith('забрать')
-    await updateUser(user.id, { role: isAdmin ? 'admin' : 'player' })
+    await updateUser(user._id, { role: isAdmin ? 'admin' : 'player' })
     await reply(`${isAdmin ? lang.giveAdmin_gave[langCode] : lang.giveAdmin_removed[langCode]} ${nickname}`)
 }
 

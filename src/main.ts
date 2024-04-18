@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
 
+import mongoose from 'mongoose'
 import TelegramApi from 'node-telegram-bot-api'
 import commands from './commands'
 import onCallbackQuery from './events/callback_query'
@@ -11,6 +12,10 @@ import { Services } from './types'
 const start = async () => {
     const token = process.env.TELEGRAM_TOKEN ?? ''
     const bot = new TelegramApi(token, { polling: true })
+
+    console.log('Connecting to DB...')
+    await mongoose.connect(process.env.MONGO_URI ?? '')
+    console.log('Connected to DB!')
 
     const myCommands = Object.entries(commands)
         .filter(([_, { meta }]) => meta.displayInMenu !== false)

@@ -36,7 +36,7 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
             await reply(`${lang.nickname_change_error[langCode]}`)
         }
     } else {
-        if (user.id === msg.from.id) {
+        if (user._id === msg.from.id) {
             await reply(`${lang.nickname_already_used_by_you[langCode]}`)
         } else {
             await reply(`${lang.nickname_already_used[langCode]}`)

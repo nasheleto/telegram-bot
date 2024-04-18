@@ -1,11 +1,9 @@
-import fs from 'node:fs/promises'
-import path from 'path'
+import mongoose from 'mongoose'
 import { UserRole } from '../types'
-import { readJson } from '../utils'
 import { LangCode } from './langs'
 
 export interface User {
-    id: number
+    _id: number
     nickname?: string
     firstName: string
     lastName: string | null
@@ -19,64 +17,39 @@ export interface User {
     banExpiresAt?: number
 }
 
-const dbPath = path.resolve(process.cwd(), 'db', 'users.json')
-
-export const getUsers = async () => {
-    const users = await readJson(dbPath, [])
-
-    if (Array.isArray(users)) {
-        return users as User[]
-    } else {
-        throw new Error(`"${dbPath}" has incorrect type.`)
-    }
-}
-
-const writeUsers = async (users: User[]) => {
-    const json = JSON.stringify(users, null, 2)
-
-    return fs.writeFile(dbPath, json)
-}
-
 export const createUser = async (user: User) => {
-    const users = await getUsers()
-    users.push(user)
+    const result = await mongoose.connection.collection<User>('users').insertOne(user)
 
-    return writeUsers(users)
+    return result.acknowledged
 }
 
 export const getUserById = async (id: number) => {
-    const users = await getUsers()
-    const user = users.find((u) => u.id === id)
-    return user ?? null
+    return mongoose.connection.collection<User>('users').findOne({
+        _id: id
+    })
 }
 
-
 export const countUsers = async () => {
-    return (await getUsers()).length
+    return mongoose.connection.collection<User>('users').countDocuments()
 }
 
 export const updateUser = async (id: number, update: Partial<User>) => {
-    const users = await getUsers()
-    const foundIndex = users.findIndex((m) => m.id === id)
-    const foundUser = users[foundIndex]
-   
-    if (foundUser === undefined) {
-        return false
-    }
-
     if (update.balance !== undefined) {  
         update.balance = Math.round((update.balance + Number.EPSILON) * 100) / 100
     }
 
-    users[foundIndex] = { ...foundUser, ...update }
+    const result = await mongoose.connection.collection<User>('users').updateOne(
+        { _id: id },
+        {
+            $set: update,
+        }
+    )
 
-    await writeUsers(users)
-
-    return true
+    return result.modifiedCount !== 0
 }
 
 export const getUserByNickname = async (nickname: string) => {
-    const users = await getUsers()
-    const user = users.find((u) => u.nickname === nickname)
-    return user ?? null
+    return mongoose.connection.collection<User>('users').findOne({
+        nickname
+    })
 }

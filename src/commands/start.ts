@@ -15,7 +15,7 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
     const referrerId = args[0] !== undefined ? Number(args[0]) : undefined
     if (!userExists) {
         await createUser({
-            id: msg.from.id,
+            _id: msg.from.id,
             nickname: msg.from.username ?? msg.from.first_name,
             firstName: msg.from.first_name,
             lastName: msg.from.last_name ?? null,

@@ -45,7 +45,10 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
         balance: invoker.balance - bet + result,
     }
 
-    await updateUser(msg.from.id, update)
+    const updateResult = await updateUser(msg.from.id, update)
+    if (!updateResult) {
+        return reply(`Something went wrong.`)
+    }
 
     await reply(`${lang.casino_got_chance[langCode]} X${multiplier}. ${lang.casino_balance[langCode]} $${formatMoney(update.balance)}`)
 }
