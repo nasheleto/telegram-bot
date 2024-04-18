@@ -1,7 +1,7 @@
 import { Command, CommandMeta } from "../types"
 
 import { InvokerMissingError } from "../errors/commands"
-import { getUserByNickname, updateUser } from '../models/users'
+import * as UserService from '../services/core/users'
 import command from './command'
 
 const meta: CommandMeta = {
@@ -15,7 +15,7 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
     if (invoker === null) throw new InvokerMissingError()
     
     const nickname = args[0]
-    const user = await getUserByNickname(nickname)
+    const user = await UserService.findNyNickname(nickname)
     if (user === null) {
         return reply(lang.general_user_not_found_error[langCode])
     }
@@ -34,9 +34,9 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
         return reply(lang.ban_invalid_command_error[langCode])
     }
 
-    const banExpiresAt = Date.now() + time
-    await updateUser(user._id, {banExpiresAt})
-    await reply(`${lang.ban_success_banned[langCode]} ${nickname} ${lang.ban_success_banned_until[langCode]} ${new Date(banExpiresAt)}`)
+    const banExpiresAt = new Date(Date.now() + time)
+    await UserService.update(user._id, { banExpiresAt })
+    await reply(`${lang.ban_success_banned[langCode]} ${nickname} ${lang.ban_success_banned_until[langCode]} ${banExpiresAt}`)
 }
 
 export default command(meta, handler)

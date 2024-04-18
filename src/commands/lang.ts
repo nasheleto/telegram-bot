@@ -2,7 +2,7 @@ import { InvokerMissingError } from "../errors/commands"
 import { LANG_CODES, LangCode } from "../models/langs"
 import { Command, CommandMeta } from "../types"
 
-import { updateUser } from '../models/users'
+import * as UserService from '../services/core/users'
 import command from './command'
 
 const meta: CommandMeta = {
@@ -22,7 +22,7 @@ const handler: Command = async (bot, { msg, args, langCode, invoker, reply}, { l
         return await reply(text)
     }
 
-    await updateUser(msg.from.id, {langCode: code})
+    await UserService.update(msg.from.id, { langCode: code })
     await reply(`${lang.lang_switch_success[code]} ${code}`)
 }
 

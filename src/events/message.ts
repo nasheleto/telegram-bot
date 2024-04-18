@@ -5,8 +5,8 @@ import commands from "../commands"
 import { DEFAULT_LANG, USER_ROLES } from "../constants"
 import { InvokerMissingError } from "../errors/commands"
 import { createError } from "../models/errors"
-import { User, getUserById } from "../models/users"
-
+import { User } from "../models/users"
+import * as UserService from "../services/core/users"
 
 const handler = (bot: TelegramApi, services: Services) => async (msg: TelegramApi.Message) => {
     let user: User | null = null
@@ -19,8 +19,8 @@ const handler = (bot: TelegramApi, services: Services) => async (msg: TelegramAp
         }
 
         // check user is banned
-        user = await getUserById(telegramUser.id)
-        if (user?.banExpiresAt && user.banExpiresAt > Date.now()) {
+        user = await UserService.findById(telegramUser.id)
+        if (user?.banExpiresAt && user.banExpiresAt.getTime() > Date.now()) {
             return
         }
 
@@ -39,7 +39,7 @@ const handler = (bot: TelegramApi, services: Services) => async (msg: TelegramAp
 
         // check user has access to the command
         if (command.meta.role !== undefined) {
-            const userRole = USER_ROLES[user?.role ?? 'player'] ?? USER_ROLES.player
+            const userRole = USER_ROLES[user?.role ?? 'player']
             const requiredRole = USER_ROLES[command.meta.role]
 
             if (userRole < requiredRole) return
