@@ -3,6 +3,7 @@ import errors from './errors'
 import giveAdmin from './giveAdmin'
 import home from './home'
 import info from './info'
+import islands from './islands'
 import key from './key'
 import lang from './lang'
 import nickname from './nickname'
@@ -19,7 +20,8 @@ import start from './start'
     lang: lang,
     errors: errors,
     slot: slot,
-    key
+    key,
+    islands
 }
 
 export default commands
