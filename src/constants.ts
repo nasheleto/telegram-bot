@@ -5,6 +5,8 @@ export const USER_ROLES = {
     admin: 1
 } as const
 
+export const USER_ROLE_KEYS = Object.keys(USER_ROLES) as (keyof typeof USER_ROLES)[]
+
 export const DEFAULT_LANG: LangCode = 'ru'
 
 // permute ['B', 'G', 'L', '7']

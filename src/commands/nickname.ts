@@ -1,7 +1,7 @@
 import { InvokerMissingError } from "../errors/commands"
 import { Command, CommandMeta } from "../types"
 
-import { getUserByNickname, updateUser } from '../models/users'
+import * as UserService from '../services/core/users'
 import command from './command'
 
 const meta: CommandMeta = {
@@ -27,9 +27,9 @@ const handler: Command = async (bot, { msg, args, invoker, langCode, reply }, { 
         return await reply(`${lang.nickname_charset_error[langCode]}`)
     }
     
-    const user = await getUserByNickname(nickname)
+    const user = await UserService.findNyNickname(nickname)
     if (user === null) {
-        const success = await updateUser(msg.from.id, {nickname})
+        const success = await UserService.update(msg.from.id, { nickname })
         if (success) {
             await reply(`${lang.nickname_change_success[langCode]} ${nickname}`)
         } else {

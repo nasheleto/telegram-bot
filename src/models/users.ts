@@ -1,55 +1,32 @@
-import mongoose from 'mongoose'
-import { UserRole } from '../types'
-import { LangCode } from './langs'
+import mongoose, { InferSchemaType, Schema } from 'mongoose';
+import { USER_ROLE_KEYS } from '../constants';
+import { LANG_CODES } from './langs';
 
-export interface User {
-    _id: number
-    nickname?: string
-    firstName: string
-    lastName: string | null
-    balance: number
-    role?: UserRole
-    langCode: LangCode
-    referrerId?: number
-    registeredAt: number
-    lastBonusAt?: number 
-    lastPensionAt?: number
-    banExpiresAt?: number
-}
+const schema = new Schema({
+    _id: { type: Number, required: true },
+    referrerId: Number,
 
-export const createUser = async (user: User) => {
-    const result = await mongoose.connection.collection<User>('users').insertOne(user)
+    nickname: { type: String, required: true },
+    firstName: { type: String, required: true },
+    lastName: String,
 
-    return result.acknowledged
-}
+    role: { type: String, enum: USER_ROLE_KEYS, required: true },
+    langCode: { type: String, enum: LANG_CODES, required: true },
 
-export const getUserById = async (id: number) => {
-    return mongoose.connection.collection<User>('users').findOne({
-        _id: id
-    })
-}
+    registeredAt: { type: Date, required: true },
+    banExpiresAt: Date,
 
-export const countUsers = async () => {
-    return mongoose.connection.collection<User>('users').countDocuments()
-}
-
-export const updateUser = async (id: number, update: Partial<User>) => {
-    if (update.balance !== undefined) {  
-        update.balance = Math.round((update.balance + Number.EPSILON) * 100) / 100
+    createdAt: Date,
+    updatedAt: Date,
+},
+{
+    collection: 'users',
+    timestamps: {
+        createdAt: 'createdAt',
+        updatedAt: 'updatedAt',
     }
+})
 
-    const result = await mongoose.connection.collection<User>('users').updateOne(
-        { _id: id },
-        {
-            $set: update,
-        }
-    )
+export type User = InferSchemaType<typeof schema>;
 
-    return result.modifiedCount !== 0
-}
-
-export const getUserByNickname = async (nickname: string) => {
-    return mongoose.connection.collection<User>('users').findOne({
-        nickname
-    })
-}
+export const UserModel = mongoose.model<User>('User', schema)
