@@ -7,7 +7,7 @@ const app = express()
 
 
 async function main() {
-    await mongoose.connect('mongodb://127.0.0.1:27017/bot-test')
+    await mongoose.connect('mongodb://127.0.0.1:27017/bot-test-2')
     console.log('Connected to DB!')
 
     app.get('/bioms', async (req, res) => {

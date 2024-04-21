@@ -7,13 +7,20 @@ if (!ctx) throw new Error('no ctx')
 
 let cellSize = 1
 let centerX = 500, centerY = 500
+let mouseX = centerX, mouseY = centerY 
+let selectedX = null, selectedY = null
 
 let bioms = {}
 let islands = {}
 
 async function fetchBioms() {
     const response = await fetch('/bioms')
-    return await response.json()
+    const json = await response.json()
+
+    bioms = json.reduce((acc, n) => {
+        acc[n._id] = n
+        return acc
+    }, {})
 }
 
 async function* fetchIslands() {
@@ -61,12 +68,12 @@ async function watchIslands() {
                 switch (change.operationType) {
                     case 'insert': {
                         const island = change.fullDocument
-                        if (!bioms[island.biom]) await fetchBioms()
+                        if (!bioms[island.biomId]) await fetchBioms()
                         islands[island.biomId][island.ownerId === null][island._id] = island
                     }
                     case 'update': {
                         const island = change.fullDocument
-                        if (!bioms[island.biom]) await fetchBioms()
+                        if (!bioms[island.biomId]) await fetchBioms()
 
                         for (const biom in bioms) {
                             delete islands[biom][true][island._id]
@@ -92,13 +99,9 @@ async function watchIslands() {
 }
 
 async function fetchData() {
-    const biomsJson = await fetchBioms()
-    bioms = biomsJson.reduce((acc, n) => {
-        acc[n._id] = n
-        return acc
-    }, {})
+    await fetchBioms()
 
-    for (const biom of biomsJson) {
+    for (const biom of Object.values(bioms)) {
         if (!islands[biom._id]) islands[biom._id] = {}
         if (!islands[biom._id][true]) islands[biom._id][true] = {}
         if (!islands[biom._id][false]) islands[biom._id][false] = {}
@@ -117,7 +120,7 @@ async function fetchData() {
 
 async function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.fillStyle = '#318CE7'
+    ctx.fillStyle = '#26428B'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.strokeStyle = 'rgba(0, 0, 0, 0.3)'
 
@@ -138,6 +141,13 @@ async function draw() {
     // const padding = cellSize / cellSize
     const padding = 0
 
+    const left = Math.floor(-centerX / cellSize)
+    const right = Math.floor((canvas.width - centerX) / cellSize)
+    const top = -Math.floor(-centerY / cellSize)
+    const bottom = -Math.floor((canvas.height - centerY) / cellSize)
+
+    let drew = 0
+
     for (const [biomId, groupedByAvailability] of Object.entries(islands)) {
         const biom = bioms[biomId]
 
@@ -152,7 +162,9 @@ async function draw() {
         ctx.beginPath()
         for (const key in groupedByAvailability['true']) {
             const island = groupedByAvailability['true'][key]
-            ctx.rect(centerX + island.x * cellSize + cellSize / 1.5, centerY - island.y * cellSize + cellSize / 1.5, cellSize - cellSize / 1.5 * 2, cellSize - cellSize / 1.5 * 2)
+            if (island.location.x < left || island.location.x > right || island.location.y > top || island.location.y < bottom) continue
+            drew++
+            ctx.rect(centerX + island.location.x * cellSize + cellSize / 1.5, centerY - island.location.y * cellSize + cellSize / 1.5, cellSize - cellSize / 1.5 * 2, cellSize - cellSize / 1.5 * 2)
         }
         ctx.fill()
 
@@ -160,16 +172,29 @@ async function draw() {
         ctx.beginPath()
         for (const key in groupedByAvailability['false']) {
             const island = groupedByAvailability['false'][key]
-            ctx.rect(centerX + island.x * cellSize + padding, centerY - island.y * cellSize + padding, cellSize - padding * 2, cellSize - padding * 2)
+            if (island.location.x < left || island.location.x > right || island.location.y > top || island.location.y < bottom) continue
+            drew++
+            ctx.rect(centerX + island.location.x * cellSize + padding, centerY - island.location.y * cellSize + padding, cellSize - padding * 2, cellSize - padding * 2)
         }
         ctx.fill()
     }
 
-    const islandsCount = Object.values(islands).reduce((acc, n) => acc + Object.keys(n[false]).length + Object.keys(n[true]).length, 0)
-    ctx.font = '32px Verdana'
-    ctx.fillStyle = 'black'
-    ctx.fillText(`Islands: ${islandsCount}`, 10, 32)
-    ctx.fillText(`X: ${centerX.toFixed(1)} | Y: ${centerY.toFixed(1)} | ${cellSize.toFixed(1)}`, canvas.width - 450, 32)
+    const occupiedIslandsCount = Object.values(islands).reduce((acc, n) => acc + Object.keys(n[false]).length, 0)
+    const freeIslandsCount = Object.values(islands).reduce((acc, n) => acc + Object.keys(n[true]).length, 0)
+    const islandsCount = occupiedIslandsCount + freeIslandsCount
+    ctx.font = '24px Verdana'
+    ctx.fillStyle = 'white'
+    ctx.fillText(`Islands: ${drew} / ${islandsCount} | ${freeIslandsCount} / ${occupiedIslandsCount}`, 8, 24)
+    ctx.fillText(`X: ${selectedX} | Y: ${selectedY}`, 8, 24 * 2 + 4 * 1)
+    ctx.fillText(`Scale: ${cellSize.toFixed(1)}:1`, 8, 24 * 3 + 4 * 2)
+    ctx.fillText(`cX: ${centerX.toFixed(1)} | cY: ${centerY.toFixed(1)}`, 8, canvas.height - 8)
+
+    if (selectedX !== null && selectedY !== null) {
+        ctx.strokeStyle = 'red'
+        ctx.beginPath()
+        ctx.rect(centerX + selectedX * cellSize, centerY - selectedY * cellSize, cellSize, cellSize)
+        ctx.stroke()
+    }
 
     // pivot
     const targetSize = canvas.width
@@ -185,7 +210,12 @@ async function draw() {
     ctx.stroke()
 }
 
+let isPressed = false
 canvas.onmousedown = (e) => {
+    isPressed = true
+    selectedX = null
+    selectedY = null
+
     const onMove = (e) => {
         centerX += e.movementX
         centerY += e.movementY
@@ -195,6 +225,7 @@ canvas.onmousedown = (e) => {
 
     window.addEventListener('mousemove', onMove)
     window.addEventListener('mouseup', () => {
+        isPressed = false
         window.removeEventListener('mousemove', onMove)
     }, { once: true })
 }
@@ -212,8 +243,20 @@ window.onkeydown = (e) => {
     draw()
 }
 
+canvas.addEventListener('mousemove', (e) => {
+    if (isPressed) return
+
+    mouseX = e.offsetX
+    mouseY = e.offsetY
+
+    selectedX = Math.floor((mouseX - centerX) / cellSize)
+    selectedY = -Math.floor((mouseY - centerY) / cellSize)
+
+    draw()
+})
+
 canvas.onwheel = (e) => {
-    const value = Math.max(cellSize - Math.exp(1 / 20) * Math.sign(e.deltaY), 0.5)
+    const value = Math.max(cellSize - Math.exp(1 / 40) * Math.sign(e.deltaY), 0.5)
 
     const x = (e.offsetX - centerX) / cellSize
     const y = (e.offsetY - centerY) / cellSize

@@ -11,11 +11,11 @@ const schema = new Schema({
     biomId: { type: mongoose.Types.ObjectId, required: true },
     biomOriginId: { type: mongoose.Types.ObjectId, required: true },
 
-    location: Point2DSchema,
+    location: { type: Point2DSchema, required: true },
     rand: { type: Number, required: true },
     size: { type: Number, required: true },
     maxSize: { type: Number, required: true },
-    cells: [CellSchema],
+    cells: { type: [CellSchema], required: true },
 
     createdAt: Date,
     updatedAt: Date,
@@ -28,11 +28,9 @@ const schema = new Schema({
     }
 })
 
-schema.index({ biomId: 1 })
 schema.index({ biomId: 1, biomOriginId: 1 })
 schema.index({ "location.x": 1, "location.y": 1 }, { unique: true })
 
 export type Island = InferSchemaType<typeof schema>;
-export type IslandCell = InferSchemaType<typeof CellSchema>;
 
 export const IslandModel = mongoose.model<Island>('Island', schema)
