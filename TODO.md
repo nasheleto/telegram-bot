@@ -17,7 +17,6 @@
         - Stone
         - Food
         - Money
-        - Gold
 
 - Bioms
     - Glacier
@@ -34,14 +33,15 @@
                 - Island Expansion (Workers, Ice, Food)
                 - Salt + Food (Food Preservation)
                 - Submarines (Diving / Expeditions)
+                - Underground buildings
                 - Radio (world upgrades)
+                    - World Arena Gladiators (money)
             - Workshop (upgrade)
-            - Port (inter-trading / expeditions)
+            - Port (inter-trading / expeditions / move island)
 
             - Ice Farm (resource)
 
             - Salt Farm (food)
-            - Bridge (intra-trading)
             - Casino (money)
     - Desert
         - Food
@@ -57,6 +57,7 @@
                 - Island Expansion (Workers, Sandstone, Food)
                 - Salt + Food (Food Preservation)
                 - Submarines (Diving / Expeditions)
+                - Underground buildings
                 - Radio (world upgrades)
                     - World Arena Gladiators (money)
             - Workshop (upgrade)
@@ -65,7 +66,6 @@
             - Sand Quarry (resource)
 
             - Salt Farm (food)
-            - Bridge (intra-trading)
             - Casino (money)
     - Forest
         - Food
@@ -81,6 +81,7 @@
                 - Island Expansion (Workers, Wood, Food)
                 - Salt + Food (Food Preservation)
                 - Submarines (Diving / Expeditions)
+                - Underground buildings
                 - Radio (world upgrades)
                     - World Arena Gladiators (money)
             - Workshop (upgrade)
@@ -89,7 +90,6 @@
             - Sawmill (resource)
 
             - Salt Farm (food)
-            - Bridge (intra-trading)
             - Casino (money)
     - Swamp
         - Food
@@ -105,6 +105,7 @@
                 - Island Expansion (Workers, Clay, Food)
                 - Salt + Food (Food Preservation)
                 - Submarines (Diving / Expeditions)
+                - Underground buildings
                 - Radio (world upgrades)
                     - World Arena Gladiators (money)
             - Workshop (upgrade)
@@ -113,7 +114,6 @@
             - Clay Quarry (resource)
 
             - Salt Farm (food)
-            - Bridge (intra-trading)
             - Casino (money)
     - Mountain
         - Food
@@ -129,6 +129,7 @@
                 - Island Expansion (Workers, Stone, Food)
                 - Salt + Food (Food Preservation)
                 - Submarines (Diving / Expeditions)
+                - Underground buildings
                 - Radio (world upgrades)
                     - World Arena Gladiators (money)
             - Workshop (upgrade)
@@ -137,5 +138,4 @@
             - Mine (resource)
 
             - Salt Farm (food)
-            - Bridge (intra-trading)
             - Casino (money)
