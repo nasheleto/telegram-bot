@@ -73,3 +73,22 @@ export const readJson = async (path: string, defaultValue: unknown | undefined =
       }
   }
 }
+
+export interface MongoError extends Error {
+  name: string
+  code: number
+}
+
+export interface MongoBulkWriteError extends Error {
+  name: string
+  code: number
+  writeErrors: { err: Record<string, any>, index: number }[]
+}
+
+export const isMongoError = (error: Error): error is MongoError => {
+  return error.name === 'MongoServerError'
+}
+
+export const isMongoBulkWriteError = (error: Error): error is MongoBulkWriteError => {
+  return error.name === 'MongoBulkWriteError'
+}

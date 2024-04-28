@@ -8,7 +8,8 @@
     "dev:remote": "cross-env NODE_ENV=\"development\" nodemon --config nodemon.json",
     "start": "node dist/main.js",
     "build": "rimraf dist && tsc",
-    "visualizer:start": "concurrently \"node ./exp/island-visualizer/server.js\" \"start http://127.0.0.1:8080\""
+    "visualizer:start": "concurrently \"node ./exp/island-visualizer/server.js\" \"start http://127.0.0.1:8080\"",
+    "init-world:dev": "ts-node ./src/scripts/init-world/index.ts"
   },
   "keywords": [],
   "author": "",

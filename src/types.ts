@@ -11,6 +11,10 @@ export interface Services {
     lang: Lang
 }
 
+export interface Resource {
+    key: string
+} 
+
 export type CommandMessage = TelegramApi.Message & {
     from: TelegramUser
     text: string

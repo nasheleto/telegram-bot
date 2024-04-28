@@ -1,5 +1,5 @@
 import mongoose, { InferSchemaType, Schema } from 'mongoose';
-import { USER_ROLE_KEYS } from '../constants';
+import { USER_ROLES_KEYS } from '../constants';
 import { LANG_CODES } from './langs';
 
 const schema = new Schema({
@@ -10,7 +10,7 @@ const schema = new Schema({
     firstName: { type: String, required: true },
     lastName: String,
 
-    role: { type: String, enum: USER_ROLE_KEYS, required: true },
+    role: { type: String, enum: USER_ROLES_KEYS, required: true },
     langCode: { type: String, enum: LANG_CODES, required: true },
 
     registeredAt: { type: Date, required: true },

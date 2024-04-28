@@ -1,9 +1,12 @@
 import mongoose, { InferSchemaType, Schema } from 'mongoose';
+import { Document } from './base';
+import { ResourcesBreakdownSchema } from './common';
 
 const schema = new Schema({
     name: { type: String, required: true },
+    slug: { type: String, required: true },
     biomId: { type: mongoose.Types.ObjectId, required: true },
-
+    cost: { type: ResourcesBreakdownSchema, required: true, default: {} },
 
     createdAt: Date,
     updatedAt: Date,
@@ -16,6 +19,8 @@ const schema = new Schema({
     }
 })
 
-export type Building = InferSchemaType<typeof schema>;
+schema.index({ biomId: 1, slug: 1 }, { unique: true })
 
-export const BuildingModel = mongoose.model<Building>('Building', schema)
+export type Building = Document<mongoose.Types.ObjectId, InferSchemaType<typeof schema>>;
+
+export const BuildingModel = mongoose.model('Building', schema)
