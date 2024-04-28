@@ -62,7 +62,7 @@ const generateIslandsAround = async (island: Island, biom: Biom) => {
 
         if (!boundaries) return true
 
-        const offsetK = 10
+        const offsetK = 4
         const offset = Math.floor(Math.random() * (offsetK - (-offsetK))) + (-offsetK)
 
         const top = boundaries.top
@@ -109,7 +109,7 @@ const generateIslandsAround = async (island: Island, biom: Biom) => {
 
 (async() => {
     console.log('Connecting to DB...')
-    await mongoose.connect('mongodb://127.0.0.1:27017/bot-test-2')
+    await mongoose.connect('mongodb://127.0.0.1:27017/bot-test-4')
     console.log('DB connected!')
 
     // Fixtures
@@ -119,10 +119,10 @@ const generateIslandsAround = async (island: Island, biom: Biom) => {
             name: 'Forest',
             color: '#5FA777',
             origins: [
-                { location: { x: -120, y: 50 }, generationRules: [{ sort: { rand: 1 }, weight: 0.4 }, { sort: { _id: 1 }, weight: 0.6 }] },
-                { location: { x: -110, y: 40 }, generationRules: [{ sort: { rand: 1 }, weight: 0.7 }, { sort: { _id: 1 }, weight: 0.3 }] },
-                { location: { x: 50, y: 75 }, generationRules: [{ sort: { rand: 1 }, weight: 0.4 }, { sort: { _id: 1 }, weight: 0.6 }] },
-                { location: { x: 60, y: 60 }, generationRules: [{ sort: { rand: 1 }, weight: 0.7 }, { sort: { _id: 1 }, weight: 0.3 }] },
+                { location: { x: -150, y: 50 }, generationRules: [{ sort: { rand: 1 }, weight: 0.4 }, { sort: { _id: 1 }, weight: 0.6 }] },
+                { location: { x: -130, y: 40 }, generationRules: [{ sort: { rand: 1 }, weight: 0.7 }, { sort: { _id: 1 }, weight: 0.3 }] },
+                { location: { x: 150, y: 75 }, generationRules: [{ sort: { rand: 1 }, weight: 0.4 }, { sort: { _id: 1 }, weight: 0.6 }] },
+                { location: { x: 160, y: 60 }, generationRules: [{ sort: { rand: 1 }, weight: 0.7 }, { sort: { _id: 1 }, weight: 0.3 }] },
             ]
         }).save(),
         new BiomModel({ 
@@ -147,7 +147,7 @@ const generateIslandsAround = async (island: Island, biom: Biom) => {
             name: 'Desert',
             color: '#DEB887',
             origins: [
-                { location: { x: -5, y: 10 }, generationRules: [{ sort: { rand: 1 }, weight: 0.2 }, { sort: { _id: 1 }, weight: 0.8 }], boundaries: { top: { mode: 'soft', value: 19 }, bottom: { mode: 'soft', value: -22 }, left: { mode: 'soft', value: -30 }, right: { mode: 'soft', value: 30 } } },
+                { location: { x: -5, y: 10 }, generationRules: [{ sort: { rand: 1 }, weight: 0.2 }, { sort: { _id: 1 }, weight: 0.8 }], boundaries: { top: { mode: 'soft', value: 19 }, bottom: { mode: 'soft', value: -22 }, left: { mode: 'soft', value: -40 }, right: { mode: 'soft', value: 40 } } },
                 { location: { x: 5, y: -4 }, generationRules: [{ sort: { rand: 1 }, weight: 0.2 }, { sort: { _id: 1 }, weight: 0.8 }], boundaries: { top: { mode: 'soft', value: 19 }, bottom: { mode: 'soft', value: -24 }, left: { mode: 'soft', value: -50 }, right: { mode: 'soft', value: 50 } } },
             ]
         }).save(),
@@ -159,8 +159,19 @@ const generateIslandsAround = async (island: Island, biom: Biom) => {
                 { location: { x: 154, y: 30 }, generationRules: [{ sort: { rand: 1 }, weight: 0.85 }, { sort: { _id: -1 }, weight: 0.15 }] },
             ]
         }).save(),
+        new BiomModel({ 
+            name: 'Volcano',
+            color: '#AE0C00',
+            origins: [
+                { location: { x: 267, y: 153 }, generationRules: [{ sort: { rand: 1 }, weight: 0.25 }, { sort: { _id: 1 }, weight: 0.75 }], boundaries: { top: { value: 160, mode: 'soft' }, bottom: { value: 148, mode: 'soft' }, left: { value: 258, mode: 'soft' }, right: { value: 275, mode: 'soft' } } },
+                { location: { x: 247, y: 143 }, generationRules: [{ sort: { rand: 1 }, weight: 0.85 }, { sort: { _id: 1 }, weight: 0.25 }], boundaries: { right: { value: 249, mode: 'soft' } } }, 
+                { location: { x: 264, y: 173 }, generationRules: [{ sort: { rand: 1 }, weight: 0.85 }, { sort: { _id: 1 }, weight: 0.25 }], boundaries: { bottom: { value: 170, mode: 'soft' } } },
+                { location: { x: 287, y: 148 }, generationRules: [{ sort: { rand: 1 }, weight: 0.85 }, { sort: { _id: 1 }, weight: 0.25 }], boundaries: { left: { value: 280, mode: 'soft' } } },
+                { location: { x: 265, y: 133 }, generationRules: [{ sort: { rand: 1 }, weight: 0.85 }, { sort: { _id: 1 }, weight: 0.25 }], boundaries: { top: { value: 142, mode: 'soft' } } },
+            ]
+        }).save(),
     ])
-    const [forest, glacier, mountain, desert, swamp] = bioms
+    const [forest, glacier, mountain, desert, swamp, volcano] = bioms
 
     await BuildingModel.deleteMany({})
     const tiles = await Promise.all([
@@ -169,6 +180,7 @@ const generateIslandsAround = async (island: Island, biom: Biom) => {
         new BuildingModel({ name: 'tile', biomId: mountain._id }).save(),
         new BuildingModel({ name: 'tile', biomId: desert._id }).save(),
         new BuildingModel({ name: 'tile', biomId: swamp._id }).save(),
+        new BuildingModel({ name: 'tile', biomId: volcano._id }).save(),
     ])
 
     // Origin

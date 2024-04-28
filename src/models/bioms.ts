@@ -7,15 +7,20 @@ const BiomGenerationSchema = new Schema({
 })
 
 const BiomOriginBoundarySchema = new Schema({
-    top: { value: { type: Number, required: true }, mode: { type: String, enum: ['soft', 'hard'], required: true } },
-    left: { value: { type: Number, required: true }, mode: { type: String, enum: ['soft', 'hard'], required: true } },
-    right: { value: { type: Number, required: true }, mode: { type: String, enum: ['soft', 'hard'], required: true } },
-    bottom: { value: { type: Number, required: true }, mode: { type: String, enum: ['soft', 'hard'], required: true } },
+    value: { type: Number, required: true },
+    mode: { type: String, enum: ['soft', 'hard'], required: true }
+})
+
+const BiomOriginBoundariesSchema = new Schema({
+    top: BiomOriginBoundarySchema,
+    left: BiomOriginBoundarySchema,
+    right: BiomOriginBoundarySchema,
+    bottom: BiomOriginBoundarySchema,
 })
 
 const BiomOriginSchema = new Schema({
     location: { type: Point2DSchema, required: true },
-    boundaries: BiomOriginBoundarySchema,
+    boundaries: BiomOriginBoundariesSchema,
     generationRules: { type: [BiomGenerationSchema], required: true }
 })
 
